@@ -16,7 +16,8 @@ export const updateFeed = async (prisma:PrismaClient, feed:Feed, feedData:Storag
       locked: feedData.locked,
       createdAt: feedData.createdAt,
       refreshedAt: new Date(),
-      fulltext: feedData.fulltext
+      fulltext: feedData.fulltext,
+      type: feedData.type
     },
     where: {
       id: feed.id

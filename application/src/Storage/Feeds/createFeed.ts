@@ -17,7 +17,8 @@ export const createFeed = async (prisma: PrismaClient, feedData: StorageFeedData
       locked: feedData.locked,
       nodeId: node.id,
       createdAt: feedData.createdAt,
-      fulltext: feedData.fulltext
+      fulltext: feedData.fulltext,
+      type: feedData.type
     }
   })
   console.info('Created new feed', { feedName: feed.name, nodeDomain: node.domain })
