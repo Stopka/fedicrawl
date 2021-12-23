@@ -1,0 +1,115 @@
+datasource db {
+  url      = env("POSTGRES_URL")
+  provider = "postgresql"
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["extendedIndexes","fullTextSearch"]
+}
+
+model Tag {
+  id      String    @id @default(uuid()) @db.Uuid
+  name    String    @unique
+  feedToTag FeedToTag[]
+}
+
+model Email {
+  id      String    @id @default(uuid()) @db.Uuid
+  address    String
+  feed Feed @relation(fields: [feedId], references: [id])
+  feedId String @db.Uuid
+
+  @@index([address])
+}
+
+model FeedToTag {
+  feed   Feed   @relation(fields: [feedId], references: [id])
+  feedId String @db.Uuid
+  tag    Tag    @relation(fields: [tagId], references: [id])
+  tagId  String @db.Uuid
+
+  @@id([feedId, tagId])
+}
+
+model Field {
+  id           String @id @default(uuid()) @db.Uuid
+  name         String
+  value    String
+  feed         Feed   @relation(fields: [feedId], references: [id])
+  feedId       String @db.Uuid
+
+  @@index([name])
+  @@index([value])
+}
+
+enum FeedType{
+    account
+    channel
+}
+
+model Feed {
+  id              String   @id @default(uuid()) @db.Uuid
+  node        Node @relation(fields: [nodeId], references: [id])
+  nodeId      String   @db.Uuid
+  foundAt         DateTime @default(now())
+  refreshedAt     DateTime @updatedAt
+  name         String
+  displayName     String
+  description String
+  feedToTags        FeedToTag[]
+  fields          Field[]
+  emails          Email[]
+  followersCount  Int
+  followingCount  Int
+  statusesCount   Int?
+  bot             Boolean?
+  url             String
+  avatar          String?
+  locked          Boolean
+  lastStatusAt    DateTime?
+  createdAt       DateTime
+  type FeedType @default(account)
+  parentFeedName String?
+  parentFeedDomain String?
+  fulltext String @default("")
+
+  @@index([displayName])
+  @@index([description])
+  @@index([bot])
+  @@index([locked])
+  @@index([lastStatusAt])
+  @@index([createdAt])
+  @@index([refreshedAt])
+  @@index([parentFeedName,parentFeedDomain])
+  @@index([type])
+  @@index([fulltext])
+  @@unique([name, nodeId])
+}
+
+model Node {
+  id      String       @id @default(uuid()) @db.Uuid
+  softwareName    String?
+  softwareVersion String?
+  totalUserCount Int?
+  monthActiveUserCount Int?
+  halfYearActiveUserCount Int?
+  statusesCount Int?
+  openRegistrations Boolean?
+  foundAt DateTime     @default(now())
+  refreshedAt DateTime?
+  refreshAttemptedAt DateTime?
+  domain     String       @unique
+  feeds    Feed[]
+
+  @@index([softwareName])
+  @@index([softwareVersion])
+  @@index([totalUserCount])
+  @@index([monthActiveUserCount])
+  @@index([halfYearActiveUserCount])
+  @@index([statusesCount])
+  @@index([openRegistrations])
+  @@index([refreshedAt])
+  @@index([refreshAttemptedAt])
+  @@index([foundAt])
+}
