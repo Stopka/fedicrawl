@@ -22,13 +22,13 @@ Data providers for more apps will be probably added soon (Pull requests are welc
 
 Configuration is done using environmental variables:
 
-| Variable  | Description                                                 | Value example |
-|-----------|-------------------------------------------------------------|---------------|
-| `POSTGRES_URL` | Postgres database uri                                       |`postgresql://fedisearch:passwd@postgres:5432/fedisearch?schema=public`
-| `SEED_NODE_DOMAIN` | Domain of the first node to search users and other nodes on | `mastodon.social`
+| Variable           | Description                                                 | Value example                                                           |
+|--------------------|-------------------------------------------------------------|-------------------------------------------------------------------------|
+| `POSTGRES_URL`     | Postgres database uri                                       | `postgresql://fedisearch:passwd@postgres:5432/fedisearch?schema=public` |
+| `SEED_NODE_DOMAIN` | Domain of the first node to search users and other nodes on | `mastodon.social`                                                       |
 
 ## Deploy
 App is designed to be run in docker container and deployed using docker-compose. 
 More info can be found in [FediSearch example docker-compose](https://github.com/Stopka/fedisearch-compose) project
 
-For searching in collected feeds there is a companion server app [FediSearch](https://github.com/Stopka/fedisearch-compose)
+For searching in collected feeds there is a companion server app [FediSearch](https://github.com/Stopka/fedisearch)

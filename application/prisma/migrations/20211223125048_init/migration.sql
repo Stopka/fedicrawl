@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "FeedType" AS ENUM ('account', 'channel');
+CREATE TYPE "FeedTypeBadge" AS ENUM ('account', 'channel');
 
 -- CreateTable
 CREATE TABLE "Tag" (
@@ -54,7 +54,7 @@ CREATE TABLE "Feed" (
     "locked" BOOLEAN NOT NULL,
     "lastStatusAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL,
-    "type" "FeedType" NOT NULL DEFAULT E'account',
+    "type" "FeedTypeBadge" NOT NULL DEFAULT E'account',
     "parentFeedName" TEXT,
     "parentFeedDomain" TEXT,
     "fulltext" TEXT NOT NULL DEFAULT E'',
