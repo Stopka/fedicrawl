@@ -11,7 +11,7 @@ import { createFeed } from '../../Storage/Feeds/createFeed'
 import prepareFulltext from './prepareFulltext'
 
 export const addFeed = async (prisma: PrismaClient, node: Node, feedData: FeedData): Promise<Feed> => {
-  const fulltext = prepareFulltext(feedData)
+  const fulltext = prepareFulltext(feedData, node)
   const feed = await createFeed(prisma, { ...feedData, fulltext }, node)
 
   await createFeedFields(prisma, feed, feedData.fields)
