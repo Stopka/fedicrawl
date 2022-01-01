@@ -12,8 +12,12 @@ FROM build AS dev
 CMD npm run dev
 
 FROM node:16-bullseye AS prod
+RUN groupadd -g 1001 nodejs
+RUN useradd -u 1001 -g 1001 nextjs
 WORKDIR /srv
+USER nextjs
 COPY --from=build /srv/node_modules ./node_modules
+COPY --from=build /srv/prisma ./prisma
 COPY --from=build /srv/package*.json ./
 COPY --from=build /srv/dist ./dist
-CMD start:deploy
+CMD npm run start:deploy
