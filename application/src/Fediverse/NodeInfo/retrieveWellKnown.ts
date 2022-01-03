@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { assertSuccessJsonResponse } from '../assertSuccessJsonResponse'
 import { z } from 'zod'
+import { getDefaultTimeoutMilliseconds } from '../getDefaultTimeoutMilliseconds'
 
 const wellKnownSchema = z.object({
   links: z.array(
@@ -16,7 +17,7 @@ export type WellKnown = z.infer<typeof wellKnownSchema>
 export const retrieveWellKnown = async (domain:string):Promise<WellKnown> => {
   console.info('Retrieving well known', { domain: domain })
   const wellKnownUrl = `https://${domain}/.well-known/nodeinfo`
-  const wellKnownResponse = await axios.get(wellKnownUrl, { timeout: 10000 })
+  const wellKnownResponse = await axios.get(wellKnownUrl, { timeout: getDefaultTimeoutMilliseconds() })
   assertSuccessJsonResponse(wellKnownResponse)
   return wellKnownSchema.parse(wellKnownResponse.data)
 }

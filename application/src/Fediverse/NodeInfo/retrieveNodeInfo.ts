@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { z } from 'zod'
 import { assertSuccessJsonResponse } from '../assertSuccessJsonResponse'
+import { getDefaultTimeoutMilliseconds } from '../getDefaultTimeoutMilliseconds'
 
 const schema = z.object({
   software: z.object({
@@ -25,7 +26,7 @@ export type NodeInfo = z.infer<typeof schema>
 
 export const retrieveNodeInfo = async (url:string):Promise<NodeInfo> => {
   console.info('Retrieving node info', { url: url })
-  const nodeInfoResponse = await axios.get(url, { timeout: 10000 })
+  const nodeInfoResponse = await axios.get(url, { timeout: getDefaultTimeoutMilliseconds() })
   assertSuccessJsonResponse(nodeInfoResponse)
   return schema.parse(nodeInfoResponse.data)
 }

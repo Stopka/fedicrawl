@@ -4,6 +4,7 @@ import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
+import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 
 const limit = 100
 
@@ -32,7 +33,7 @@ export const retrieveAccounts = async (domain: string, page: number): Promise<Fe
       sort: 'createdAt',
       start: page * limit
     },
-    timeout: 10000
+    timeout: getDefaultTimeoutMilliseconds()
   })
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)

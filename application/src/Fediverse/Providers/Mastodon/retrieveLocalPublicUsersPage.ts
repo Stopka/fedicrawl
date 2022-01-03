@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { FeedData } from '../FeedData'
-import { string, z } from 'zod'
+import { z } from 'zod'
+import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 
 const limit = 500
 
@@ -56,7 +57,7 @@ export const retrieveLocalPublicUsersPage = async (domain: string, page: number)
         offset: page * limit,
         local: true
       },
-      timeout: 10000
+      timeout: getDefaultTimeoutMilliseconds()
     })
     assertSuccessJsonResponse(response)
     const responseData = schema.parse(response.data)

@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { FieldData } from '../FieldData'
 import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
+import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 
 const limit = 100
 
@@ -39,7 +40,7 @@ export const retrieveVideoChannels = async (domain: string, page: number): Promi
       sort: 'createdAt',
       start: page * limit
     },
-    timeout: 10000
+    timeout: getDefaultTimeoutMilliseconds()
   })
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)

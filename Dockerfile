@@ -1,6 +1,11 @@
 FROM node:16-bullseye AS build
 ENV POSTGRES_URL='postgresql://fedisearch:passwd@postgres:5432/fedisearch?schema=public' \
-    SEED_NODE_DOMAIN='mastodon.social'
+    SEED_NODE_DOMAIN='mastodon.social' \
+    REATTEMPT_MINUTES='60' \
+    REFRESH_HOURS='120' \
+    WAIT_FOR_JOB_MINUTES='60' \
+    DEFAULT_TIMEOUT_MILLISECONDS='10000' \
+    TZ='UTC'
 WORKDIR /srv
 COPY application/package*.json ./
 COPY application/prisma ./prisma/

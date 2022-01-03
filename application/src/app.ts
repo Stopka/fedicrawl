@@ -9,10 +9,9 @@ const loop = async (): Promise<void> => {
       await processNextNode(prismaClient, providerRegistry)
     } catch (err) {
       console.warn(err)
-      const milisecondsInMinute = 1000 * 60
-      const timeout = 60 * milisecondsInMinute
-      console.info('Delaying next node process', { timeoutMinutes: timeout / milisecondsInMinute, now: new Date() })
-      setTimeout(loop, timeout)
+      const waitForJobMilliseconds = parseInt(process.env.WAIT_FOR_JOB_MINUTES ?? '60') * 60 * 1000
+      console.info('Delaying next node process', { timeoutMilliseconds: waitForJobMilliseconds, timeoutDate: new Date(Date.now() + waitForJobMilliseconds), now: new Date() })
+      setTimeout(loop, waitForJobMilliseconds)
       return
     }
   }
