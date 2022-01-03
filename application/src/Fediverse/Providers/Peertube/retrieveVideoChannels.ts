@@ -6,6 +6,7 @@ import { FieldData } from '../FieldData'
 import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import { parseDescription } from './parseDescription'
 
 const limit = 100
 
@@ -59,7 +60,7 @@ export const retrieveVideoChannels = async (domain: string, page: number): Promi
         avatar: parseAvatarUrl(item.avatar, domain),
         locked: false,
         fields: fields,
-        description: item.description ?? '',
+        description: parseDescription(item.description),
         displayName: item.displayName,
         followersCount: item.followersCount,
         followingCount: item.followingCount,
