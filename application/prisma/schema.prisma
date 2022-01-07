@@ -43,7 +43,7 @@ model Field {
   @@index([value])
 }
 
-enum FeedTypeBadge{
+enum FeedType{
     account
     channel
 }
@@ -69,7 +69,7 @@ model Feed {
   locked          Boolean
   lastStatusAt    DateTime?
   createdAt       DateTime
-  type FeedTypeBadge @default(account)
+  type FeedType @default(account)
   parentFeedName String?
   parentFeedDomain String?
   fulltext String @default("")
