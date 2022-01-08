@@ -14,7 +14,9 @@ Node's public feeds and peering nodes are retrieved only on several supported so
 ## Supported Fediverse software
 For now only two fediverse apps are supported:
 * [Mastodon](https://joinmastodon.org/)
+* [Pleroma](https://pleroma.social/#featured-instances) (hopefully after release of version 4.2)
 * [Peertube](https://joinpeertube.org/)
+* [Misskey](https://join.misskey.page/)
 
 Data providers for more apps will be probably added soon (Pull requests are welcomed)
 
