@@ -60,8 +60,8 @@ model Feed {
   feedToTags        FeedToTag[]
   fields          Field[]
   emails          Email[]
-  followersCount  Int
-  followingCount  Int
+  followersCount  Int?
+  followingCount  Int?
   statusesCount   Int?
   bot             Boolean?
   url             String
