@@ -7,7 +7,7 @@ export const updateNode = async (prisma: PrismaClient, node: Node, nodeInfo:Node
       id: node.id
     },
     data: {
-      softwareName: nodeInfo.software.name,
+      softwareName: nodeInfo.software.name.toLocaleLowerCase(),
       softwareVersion: nodeInfo.software.version,
       totalUserCount: nodeInfo.usage?.users?.total ?? null,
       monthActiveUserCount: nodeInfo.usage?.users?.activeMonth ?? null,
