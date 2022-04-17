@@ -1,4 +1,5 @@
 import { Node, PrismaClient } from '@prisma/client'
+import { NoNodeFoundError } from './NoNodeFoundError'
 
 export const fetchNodeToProcess = async (prisma: PrismaClient): Promise<Node> => {
   const currentTimestamp = Date.now()
@@ -56,10 +57,10 @@ export const fetchNodeToProcess = async (prisma: PrismaClient): Promise<Node> =>
       ]
     }
   })
-  if (node) {
-    console.log('Found oldest node', { domain: node.domain })
-  } else {
-    throw new Error('No node found')
+  if (!node) {
+    throw new NoNodeFoundError()
   }
+
+  console.log('Found oldest node', { domain: node.domain })
   return node
 }

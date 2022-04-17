@@ -3,6 +3,9 @@ import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { FeedData } from '../FeedData'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import { NodeProviderMethod } from '../NodeProviderMethod'
+import { NoMoreFeedsError } from '../NoMoreFeedsError'
+import { FeedProviderMethod } from '../FeedProviderMethod'
 
 const limit = 100
 
@@ -60,57 +63,53 @@ const parseDescription = (description:string|null):string => {
   }).join('\n')
 }
 
-export const retrieveUsersPage = async (domain: string, page: number): Promise<FeedData[]> => {
-  try {
-    const response = await axios.post('https://' + domain + '/api/users', {
-      state: 'all',
-      origin: 'local',
-      sort: '+createdAt',
-      limit: limit,
-      offset: limit * page
-    }, {
-      timeout: getDefaultTimeoutMilliseconds()
-    })
-    assertSuccessJsonResponse(response)
-    const responseData = schema.parse(response.data)
-    if (responseData.length === 0) {
-      throw new Error('No more users')
-    }
-    return responseData.map(
-      item => {
-        return {
-          name: item.username,
-          displayName: replaceEmojis(item.name ?? item.username, item.emojis),
-          description: replaceEmojis(parseDescription(item.description ?? ''), item.emojis),
-          followersCount: item.followersCount,
-          followingCount: item.followingCount,
-          statusesCount: item.notesCount,
-          bot: item.isBot,
-          url: `https://${domain}/@${item.username}`,
-          avatar: item.avatarUrl,
-          locked: item.isLocked,
-          lastStatusAt: item.updatedAt !== null ? new Date(item.updatedAt) : null,
-          createdAt: new Date(item.createdAt),
-          fields: [
-            ...item.fields.map(field => {
-              return {
-                name: replaceEmojis(field.name, item.emojis),
-                value: replaceEmojis(field.value, item.emojis),
-                verifiedAt: null
-              }
-            }),
-            ...[
-              { name: 'Location', value: item.location, verifiedAt: null },
-              { name: 'Birthday', value: item.birthday, verifiedAt: null },
-              { name: 'Language', value: item.lang, verifiedAt: null }
-            ].filter(field => field.value !== null)
-          ],
-          type: 'account',
-          parentFeed: null
-        }
-      }
-    )
-  } catch (error) {
-    throw new Error('Invalid response: ' + error)
+export const retrieveUsersPage:FeedProviderMethod = async (domain, page) => {
+  const response = await axios.post('https://' + domain + '/api/users', {
+    state: 'all',
+    origin: 'local',
+    sort: '+createdAt',
+    limit: limit,
+    offset: limit * page
+  }, {
+    timeout: getDefaultTimeoutMilliseconds()
+  })
+  assertSuccessJsonResponse(response)
+  const responseData = schema.parse(response.data)
+  if (responseData.length === 0) {
+    throw new NoMoreFeedsError('user')
   }
+  return responseData.map(
+    item => {
+      return {
+        name: item.username,
+        displayName: replaceEmojis(item.name ?? item.username, item.emojis),
+        description: replaceEmojis(parseDescription(item.description ?? ''), item.emojis),
+        followersCount: item.followersCount,
+        followingCount: item.followingCount,
+        statusesCount: item.notesCount,
+        bot: item.isBot,
+        url: `https://${domain}/@${item.username}`,
+        avatar: item.avatarUrl,
+        locked: item.isLocked,
+        lastStatusAt: item.updatedAt !== null ? new Date(item.updatedAt) : null,
+        createdAt: new Date(item.createdAt),
+        fields: [
+          ...item.fields.map(field => {
+            return {
+              name: replaceEmojis(field.name, item.emojis),
+              value: replaceEmojis(field.value, item.emojis),
+              verifiedAt: null
+            }
+          }),
+          ...[
+            { name: 'Location', value: item.location, verifiedAt: null },
+            { name: 'Birthday', value: item.birthday, verifiedAt: null },
+            { name: 'Language', value: item.lang, verifiedAt: null }
+          ].filter(field => field.value !== null)
+        ],
+        type: 'account',
+        parentFeed: null
+      }
+    }
+  )
 }

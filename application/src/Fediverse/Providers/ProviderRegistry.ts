@@ -1,5 +1,6 @@
 import { Provider } from './Provider'
 import { Dictionary } from 'typescript-collections'
+import { ProviderKeyAlreadyRegisteredError } from './ProviderKeyAlreadyRegisteredError'
 
 export interface ProviderCallback {
     (key: string, provider: Provider): void
@@ -10,7 +11,7 @@ const providers: Dictionary<string, Provider> = new Dictionary<string, Provider>
 const registerProvider = (provider: Provider): void => {
   const key = provider.getKey()
   if (providers.containsKey(key)) {
-    throw new Error(`Provider with the key ${key} is already registered`)
+    throw new ProviderKeyAlreadyRegisteredError(key)
   }
   providers.setValue(key, provider)
   console.info('Added provider to registry', { key: key })

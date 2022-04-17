@@ -7,6 +7,8 @@ import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 import { parseDescription } from './parseDescription'
+import { FeedProviderMethod } from '../FeedProviderMethod'
+import { NoMoreFeedsError } from '../NoMoreFeedsError'
 
 const limit = 100
 
@@ -34,7 +36,7 @@ const schema = z.object({
   )
 })
 
-export const retrieveVideoChannels = async (domain: string, page: number): Promise<FeedData[]> => {
+export const retrieveVideoChannels:FeedProviderMethod = async (domain, page) => {
   const response = await axios.get(`https://${domain}/api/v1/video-channels`, {
     params: {
       count: limit,
@@ -46,7 +48,7 @@ export const retrieveVideoChannels = async (domain: string, page: number): Promi
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)
   if (responseData.data.length === 0) {
-    throw new Error('No more channels')
+    throw new NoMoreFeedsError('channel')
   }
   return responseData.data
     .filter(item => item.host === domain)

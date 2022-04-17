@@ -1,6 +1,6 @@
-import { FeedData } from './FeedData'
+import { FeedProviderMethod } from './FeedProviderMethod'
 
 export interface FeedProvider {
     getKey: ()=>string
-    retrieveFeeds: (domain:string, page:number)=> Promise<FeedData[]>
+    retrieveFeeds: FeedProviderMethod
 }

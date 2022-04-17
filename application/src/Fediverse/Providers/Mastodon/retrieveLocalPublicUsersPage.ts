@@ -1,8 +1,9 @@
 import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
-import { FeedData } from '../FeedData'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import { FeedProviderMethod } from '../FeedProviderMethod'
+import { NoMoreFeedsError } from '../NoMoreFeedsError'
 
 const limit = 500
 
@@ -49,49 +50,45 @@ const replaceEmojis = (text: string, emojis: Emoji[]): string => {
   return text
 }
 
-export const retrieveLocalPublicUsersPage = async (domain: string, page: number): Promise<FeedData[]> => {
-  try {
-    const response = await axios.get('https://' + domain + '/api/v1/directory', {
-      params: {
-        limit: limit,
-        offset: page * limit,
-        local: true
-      },
-      timeout: getDefaultTimeoutMilliseconds()
-    })
-    assertSuccessJsonResponse(response)
-    const responseData = schema.parse(response.data)
-    if (responseData.length === 0) {
-      throw new Error('No more users')
-    }
-    return responseData.map(
-      item => {
-        return {
-          name: item.username,
-          displayName: replaceEmojis(item.display_name, item.emojis),
-          description: replaceEmojis(item.note, item.emojis),
-          followersCount: item.followers_count,
-          followingCount: item.following_count,
-          statusesCount: item.statuses_count,
-          bot: item.bot,
-          url: item.url,
-          avatar: item.avatar,
-          locked: item.locked,
-          lastStatusAt: item.last_status_at !== null ? new Date(item.last_status_at) : null,
-          createdAt: new Date(item.created_at),
-          fields: item.fields.map(field => {
-            return {
-              name: replaceEmojis(field.name, item.emojis),
-              value: replaceEmojis(field.value, item.emojis),
-              verifiedAt: field.verified_at !== null ? new Date(field.verified_at) : null
-            }
-          }),
-          type: 'account',
-          parentFeed: null
-        }
-      }
-    )
-  } catch (error) {
-    throw new Error('Invalid response: ' + error)
+export const retrieveLocalPublicUsersPage: FeedProviderMethod = async (domain, page) => {
+  const response = await axios.get('https://' + domain + '/api/v1/directory', {
+    params: {
+      limit: limit,
+      offset: page * limit,
+      local: true
+    },
+    timeout: getDefaultTimeoutMilliseconds()
+  })
+  assertSuccessJsonResponse(response)
+  const responseData = schema.parse(response.data)
+  if (responseData.length === 0) {
+    throw new NoMoreFeedsError('user')
   }
+  return responseData.map(
+    item => {
+      return {
+        name: item.username,
+        displayName: replaceEmojis(item.display_name, item.emojis),
+        description: replaceEmojis(item.note, item.emojis),
+        followersCount: item.followers_count,
+        followingCount: item.following_count,
+        statusesCount: item.statuses_count,
+        bot: item.bot,
+        url: item.url,
+        avatar: item.avatar,
+        locked: item.locked,
+        lastStatusAt: item.last_status_at !== null ? new Date(item.last_status_at) : null,
+        createdAt: new Date(item.created_at),
+        fields: item.fields.map(field => {
+          return {
+            name: replaceEmojis(field.name, item.emojis),
+            value: replaceEmojis(field.value, item.emojis),
+            verifiedAt: field.verified_at !== null ? new Date(field.verified_at) : null
+          }
+        }),
+        type: 'account',
+        parentFeed: null
+      }
+    }
+  )
 }

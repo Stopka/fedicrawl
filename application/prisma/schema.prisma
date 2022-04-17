@@ -5,7 +5,7 @@ datasource db {
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["extendedIndexes","fullTextSearch"]
+  previewFeatures = ["extendedIndexes","fullTextSearch","referentialActions"]
 }
 
 model Tag {
@@ -17,16 +17,16 @@ model Tag {
 model Email {
   id      String    @id @default(uuid()) @db.Uuid
   address    String
-  feed Feed @relation(fields: [feedId], references: [id])
+  feed Feed @relation(fields: [feedId], references: [id], onDelete: Cascade)
   feedId String @db.Uuid
 
   @@index([address])
 }
 
 model FeedToTag {
-  feed   Feed   @relation(fields: [feedId], references: [id])
+  feed   Feed   @relation(fields: [feedId], references: [id], onDelete: Cascade)
   feedId String @db.Uuid
-  tag    Tag    @relation(fields: [tagId], references: [id])
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
   tagId  String @db.Uuid
 
   @@id([feedId, tagId])
@@ -36,7 +36,7 @@ model Field {
   id           String @id @default(uuid()) @db.Uuid
   name         String
   value    String
-  feed         Feed   @relation(fields: [feedId], references: [id])
+  feed         Feed   @relation(fields: [feedId], references: [id], onDelete: Cascade)
   feedId       String @db.Uuid
 
   @@index([name])
@@ -50,7 +50,7 @@ enum FeedType{
 
 model Feed {
   id              String   @id @default(uuid()) @db.Uuid
-  node        Node @relation(fields: [nodeId], references: [id])
+  node        Node @relation(fields: [nodeId], references: [id], onDelete: Cascade)
   nodeId      String   @db.Uuid
   foundAt         DateTime @default(now())
   refreshedAt     DateTime @updatedAt

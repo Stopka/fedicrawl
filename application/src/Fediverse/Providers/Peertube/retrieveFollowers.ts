@@ -2,6 +2,8 @@ import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import { NodeProviderMethod } from '../NodeProviderMethod'
+import { NoMoreNodesError } from '../NoMoreNodesError'
 
 const limit = 100
 
@@ -19,7 +21,7 @@ const schema = z.object({
   )
 })
 
-export const retrieveFollowers = async (domain: string, page: number): Promise<string[]> => {
+export const retrieveFollowers:NodeProviderMethod = async (domain, page) => {
   const response = await axios.get(`https://${domain}/api/v1/server/followers`, {
     params: {
       count: limit,
@@ -36,7 +38,7 @@ export const retrieveFollowers = async (domain: string, page: number): Promise<s
     hosts.add(item.following.host)
   })
   if (hosts.size === 0) {
-    throw new Error('No more followers')
+    throw new NoMoreNodesError('follower')
   }
   return Array.from(hosts)
 }

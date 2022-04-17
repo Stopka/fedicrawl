@@ -1,10 +1,16 @@
 import { AxiosResponse } from 'axios'
+import { UnexpectedResponseStatusError } from './UnexpectedResponseStatusError'
+import { UnexpectedContentTypeError } from './UnexpectedContentTypeError'
 
-export const assertSuccessJsonResponse = (response:AxiosResponse<unknown>):void => {
-  if (response.status !== 200) {
-    throw new Error('Unexpected response ' + response.status)
+export const assertSuccessJsonResponse = (response: AxiosResponse<unknown>): void => {
+  const expectedStatus = 200
+  const actualStatus = response.status
+  if (actualStatus !== expectedStatus) {
+    throw new UnexpectedResponseStatusError(expectedStatus, actualStatus)
   }
-  if (!response.headers['content-type'].startsWith('application/json')) {
-    throw new Error('Unexpected content-type ' + response.headers['content-type'])
+  const expectedContentType = 'application/json'
+  const actualContentType = response.headers['content-type']
+  if (!actualContentType.startsWith(expectedContentType)) {
+    throw new UnexpectedContentTypeError(expectedContentType, actualContentType)
   }
 }

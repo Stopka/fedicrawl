@@ -6,6 +6,8 @@ import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 import { parseDescription } from './parseDescription'
+import { NoMoreFeedsError } from '../NoMoreFeedsError'
+import { FeedProviderMethod } from '../FeedProviderMethod'
 
 const limit = 100
 
@@ -27,7 +29,7 @@ const schema = z.object({
   )
 })
 
-export const retrieveAccounts = async (domain: string, page: number): Promise<FeedData[]> => {
+export const retrieveAccounts:FeedProviderMethod = async (domain, page) => {
   const response = await axios.get(`https://${domain}/api/v1/accounts`, {
     params: {
       count: limit,
@@ -39,7 +41,7 @@ export const retrieveAccounts = async (domain: string, page: number): Promise<Fe
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)
   if (responseData.data.length === 0) {
-    throw new Error('No more accounts')
+    throw new NoMoreFeedsError('account')
   }
   return responseData.data
     .filter(item => item.host === domain)

@@ -8,6 +8,7 @@ import { findNewNodes } from './Nodes/findNewNodes'
 import { NodeProvider } from '../Fediverse/Providers/NodeProvider'
 import { FeedProvider } from '../Fediverse/Providers/FeedProvider'
 import { refreshFeeds } from './Feeds/refreshFeeds'
+import { deleteOldFeeds } from '../Storage/Feeds/deleteOldFeeds'
 
 export const processNextNode = async (prisma:PrismaClient, providerRegistry:ProviderRegistry):Promise<void> => {
   console.info('#############################################')
@@ -18,6 +19,7 @@ export const processNextNode = async (prisma:PrismaClient, providerRegistry:Prov
 
   if (!providerRegistry.containsKey(node.softwareName)) {
     console.warn('Unknown software', { domain: node.domain, software: node.softwareName })
+    await deleteOldFeeds(prisma, node)
     await setNodeRefreshed(prisma, node)
     return
   }
@@ -36,6 +38,8 @@ export const processNextNode = async (prisma:PrismaClient, providerRegistry:Prov
       return refreshFeeds(prisma, feedProvider, node)
     })
   )
+
+  await deleteOldFeeds(prisma, node)
 
   await setNodeRefreshed(prisma, node)
 }
