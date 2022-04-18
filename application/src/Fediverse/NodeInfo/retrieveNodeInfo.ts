@@ -24,9 +24,12 @@ const schema = z.object({
 
 export type NodeInfo = z.infer<typeof schema>
 
-export const retrieveNodeInfo = async (url:string):Promise<NodeInfo> => {
+export const retrieveNodeInfo = async (url: string): Promise<NodeInfo> => {
   console.info('Retrieving node info', { url: url })
-  const nodeInfoResponse = await axios.get(url, { timeout: getDefaultTimeoutMilliseconds() })
+  const nodeInfoResponse = await axios.get(url, {
+    timeout: getDefaultTimeoutMilliseconds(),
+    maxContentLength: 5000
+  })
   assertSuccessJsonResponse(nodeInfoResponse)
   return schema.parse(nodeInfoResponse.data)
 }
