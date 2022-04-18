@@ -14,10 +14,13 @@ const wellKnownSchema = z.object({
 
 export type WellKnown = z.infer<typeof wellKnownSchema>
 
-export const retrieveWellKnown = async (domain:string):Promise<WellKnown> => {
+export const retrieveWellKnown = async (domain: string): Promise<WellKnown> => {
   console.info('Retrieving well known', { domain: domain })
   const wellKnownUrl = `https://${domain}/.well-known/nodeinfo`
-  const wellKnownResponse = await axios.get(wellKnownUrl, { timeout: getDefaultTimeoutMilliseconds() })
+  const wellKnownResponse = await axios.get(wellKnownUrl, {
+    timeout: getDefaultTimeoutMilliseconds(),
+    maxContentLength: 5000
+  })
   assertSuccessJsonResponse(wellKnownResponse)
   return wellKnownSchema.parse(wellKnownResponse.data)
 }
