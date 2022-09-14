@@ -1,15 +1,22 @@
 import { FeedData } from '../../Fediverse/Providers/FeedData'
-import { fetchFeedByNodeAndName } from '../../Storage/Feeds/fetchFeedByNodeAndName'
 import { refreshFeed } from './refreshFeed'
 import { addFeed } from './addFeed'
-import { Node, PrismaClient, Feed } from '@prisma/client'
+import Feed from '../../Storage/Definitions/Feed'
+import Node from '../../Storage/Definitions/Node'
+import { ElasticClient } from '../../Storage/ElasticClient'
+import getFeed from '../../Storage/Feeds/getFeed'
 
-export const refreshOrAddFeed = async (prisma:PrismaClient, node:Node, feedData:FeedData):Promise<Feed> => {
-  const feed = await fetchFeedByNodeAndName(prisma, node, feedData.name)
+export const refreshOrAddFeed = async (elastic: ElasticClient, node:Node, feedData:FeedData):Promise<Feed> => {
+  let feed:Feed|null = null
+  try {
+    feed = await getFeed(elastic, `${feedData.name}@${node.domain}`)
+  } catch (e) {
+
+  }
   if (feed) {
     console.info('Refreshing feed', { nodeDomain: node.domain, feedName: feedData.name, feedType: feedData.type })
-    return await refreshFeed(prisma, feed, feedData, node)
+    return await refreshFeed(elastic, feed, feedData, node)
   }
   console.info('Adding feed', { nodeDomain: node.domain, feedName: feedData.name, feedType: feedData.type })
-  return await addFeed(prisma, node, feedData)
+  return await addFeed(elastic, node, feedData)
 }

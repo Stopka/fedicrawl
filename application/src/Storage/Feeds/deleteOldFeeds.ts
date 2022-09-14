@@ -1,18 +1,22 @@
-import { Node, PrismaClient } from '@prisma/client'
+import { ElasticClient } from '../ElasticClient'
+import Node from '../Definitions/Node'
+import feedIndex from '../Definitions/feedIndex'
 
-export const deleteOldFeeds = async (prisma: PrismaClient, node: Node): Promise<number> => {
-  const result = await prisma.feed.deleteMany({
-    where: {
-      nodeId: {
-        equals: node.id
-      },
-      refreshedAt: {
-        lt: node.refreshAttemptedAt
+export const deleteOldFeeds = async (elastic: ElasticClient, node: Node): Promise<number> => {
+  await elastic.indices.refresh({ index: feedIndex })
+  const result = await elastic.deleteByQuery({
+    index: feedIndex,
+    query: {
+      bool: {
+        must: [
+          { match: { domain: node.domain } },
+          { range: { refreshedAt: { lt: node.refreshAttemptedAt } } }
+        ]
       }
     }
   })
   console.info('Deleted old feeds', {
-    count: result.count, olderThen: node.refreshAttemptedAt, nodeDomain: node.domain
+    count: result.deleted, olderThen: node.refreshAttemptedAt, nodeDomain: node.domain
   })
-  return result.count
+  return result.deleted
 }

@@ -1,8 +1,8 @@
 import { Avatar } from './Avatar'
 
-export const parseAvatarUrl = (data:Avatar, domain:string):string|null => {
+export const parseAvatarUrl = (data:Avatar, domain:string):string|undefined => {
   if (data === null) {
-    return null
+    return undefined
   }
   return `https://${domain}${data.path}`
 }

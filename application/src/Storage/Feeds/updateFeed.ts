@@ -1,9 +1,14 @@
-import { Feed, PrismaClient } from '@prisma/client'
 import StorageFeedData from './StorageFeedData'
+import Feed from '../Definitions/Feed'
+import { ElasticClient } from '../ElasticClient'
+import feedIndex from '../Definitions/feedIndex'
+import getFeed from './getFeed'
 
-export const updateFeed = async (prisma:PrismaClient, feed:Feed, feedData:StorageFeedData):Promise<Feed> => {
-  const updatedFeed = await prisma.feed.update({
-    data: {
+export const updateFeed = async (elastic: ElasticClient, feed:Feed, feedData:StorageFeedData):Promise<Feed> => {
+  await elastic.update<Feed>({
+    index: feedIndex,
+    id: feed.fullName,
+    doc: {
       url: feedData.url,
       bot: feedData.bot,
       avatar: feedData.avatar,
@@ -15,14 +20,15 @@ export const updateFeed = async (prisma:PrismaClient, feed:Feed, feedData:Storag
       displayName: feedData.displayName,
       locked: feedData.locked,
       createdAt: feedData.createdAt,
-      refreshedAt: new Date(),
-      fulltext: feedData.fulltext,
-      type: feedData.type
-    },
-    where: {
-      id: feed.id
+      refreshedAt: (new Date()).getTime(),
+      type: feedData.type,
+      fields: feedData.fields.map(field => {
+        return { name: field.name, value: field.value }
+      }),
+      extractedEmails: feedData.extractedEmails,
+      extractedTags: feedData.extractedTags
     }
   })
-  console.info('Updated feed', { feedName: feed.name, nodeId: feed.nodeId })
-  return updatedFeed
+  console.info('Updated feed', { feedName: feed.name, nodeDomain: feed.domain })
+  return getFeed(elastic, feed.fullName)
 }

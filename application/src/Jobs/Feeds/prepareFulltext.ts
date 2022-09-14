@@ -1,6 +1,6 @@
 import { FeedData } from '../../Fediverse/Providers/FeedData'
 import striptags from 'striptags'
-import { Node } from '@prisma/client'
+import Node from '../../Storage/Definitions/Node'
 
 export default function (feedData: FeedData, node: Node):string {
   return striptags(

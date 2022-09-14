@@ -1,15 +1,24 @@
-import { PrismaClient, Node } from '@prisma/client'
-export const createMissingNodes = async (client:PrismaClient, domains:string[]):Promise<number> => {
-  const result = await client.node.createMany(
-    {
-      data: domains.map(domain => {
-        return {
-          domain: domain
-        }
-      }),
-      skipDuplicates: true
-    }
-  )
-  console.info('Created new nodes', { count: result.count })
-  return result.count
+import { ElasticClient } from '../ElasticClient'
+import nodeIndex from '../Definitions/nodeIndex'
+export const createMissingNodes = async (elastic: ElasticClient, domains:string[], discoveredByDomain:string|undefined):Promise<number> => {
+  const response = await elastic.bulk({
+    index: nodeIndex,
+    body: domains.flatMap(domain => [
+      {
+        create: { _id: domain }
+      },
+      {
+        domain: domain,
+        discoveredByDomain,
+        foundAt: (new Date()).getTime()
+      }
+    ])
+  })
+  const createdCount = response.items.filter(item => item.create.status === 201).length
+  console.warn('Created new nodes', {
+    requestedCount: domains.length,
+    createdCount: createdCount,
+    errors: response.items.filter(item => item.create.status !== 201).map(item => item.create.error.reason)
+  })
+  return createdCount
 }

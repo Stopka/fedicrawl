@@ -1,14 +1,17 @@
-import { Node, PrismaClient } from '@prisma/client'
+import { ElasticClient } from '../ElasticClient'
+import nodeIndex from '../Definitions/nodeIndex'
+import Node from '../Definitions/Node'
+import getNode from './getNode'
 
-export const setNodeRefreshAttempted = async (prisma:PrismaClient, node:Node):Promise<Node> => {
+export const setNodeRefreshAttempted = async (elastic: ElasticClient, node:Node):Promise<Node> => {
   const date = new Date()
   console.info('Setting node refresh attempt', { domain: node.domain, date: date })
-  return await prisma.node.update({
-    data: {
-      refreshAttemptedAt: date
-    },
-    where: {
-      id: node.id
+  await elastic.update<Node>({
+    index: nodeIndex,
+    id: node.domain,
+    doc: {
+      refreshAttemptedAt: date.getTime()
     }
   })
+  return getNode(elastic, node.domain)
 }

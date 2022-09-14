@@ -1,11 +1,14 @@
-import { PrismaClient, Node } from '@prisma/client'
 import { createMissingNodes } from '../../Storage/Nodes/createMissingNodes'
 import { NodeProvider } from '../../Fediverse/Providers/NodeProvider'
+import Node from '../../Storage/Definitions/Node'
+import { ElasticClient } from '../../Storage/ElasticClient'
+import isDomainNotBanned from '../../Storage/Nodes/isDomainNotBanned'
 
 export const findNewNodesOnPage = async (
-  prisma:PrismaClient, provider: NodeProvider, node:Node, page:number
+  elastic: ElasticClient, provider: NodeProvider, node:Node, page:number
 ):Promise<number> => {
-  const domains = await provider.retrieveNodes(node.domain, page)
+  let domains = await provider.retrieveNodes(node.domain, page)
+  domains = domains.filter(isDomainNotBanned)
   console.log('Found nodes', { count: domains.length, domain: node.domain, provider: provider.getKey(), page: page })
-  return await createMissingNodes(prisma, domains)
+  return await createMissingNodes(elastic, domains, node.domain)
 }

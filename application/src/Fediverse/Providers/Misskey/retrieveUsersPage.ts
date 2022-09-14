@@ -1,9 +1,7 @@
 import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
-import { FeedData } from '../FeedData'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
-import { NodeProviderMethod } from '../NodeProviderMethod'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
 import { FeedProviderMethod } from '../FeedProviderMethod'
 
@@ -91,24 +89,24 @@ export const retrieveUsersPage:FeedProviderMethod = async (domain, page) => {
         url: `https://${domain}/@${item.username}`,
         avatar: item.avatarUrl,
         locked: item.isLocked,
-        lastStatusAt: item.updatedAt !== null ? new Date(item.updatedAt) : null,
+        lastStatusAt: item.updatedAt !== null ? new Date(item.updatedAt) : undefined,
         createdAt: new Date(item.createdAt),
         fields: [
           ...item.fields.map(field => {
             return {
               name: replaceEmojis(field.name, item.emojis),
               value: replaceEmojis(field.value, item.emojis),
-              verifiedAt: null
+              verifiedAt: undefined
             }
           }),
           ...[
-            { name: 'Location', value: item.location, verifiedAt: null },
-            { name: 'Birthday', value: item.birthday, verifiedAt: null },
-            { name: 'Language', value: item.lang, verifiedAt: null }
+            { name: 'Location', value: item.location, verifiedAt: undefined },
+            { name: 'Birthday', value: item.birthday, verifiedAt: undefined },
+            { name: 'Language', value: item.lang, verifiedAt: undefined }
           ].filter(field => field.value !== null)
         ],
         type: 'account',
-        parentFeed: null
+        parentFeed: undefined
       }
     }
   )

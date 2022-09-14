@@ -54,7 +54,7 @@ export const retrieveVideoChannels:FeedProviderMethod = async (domain, page) => 
     .filter(item => item.host === domain)
     .map((item):FeedData => {
       const fields:FieldData[] = item.support
-        ? [{ name: 'support', value: item.support, verifiedAt: null }]
+        ? [{ name: 'support', value: item.support, verifiedAt: undefined }]
         : []
       return {
         name: item.name,
@@ -67,9 +67,9 @@ export const retrieveVideoChannels:FeedProviderMethod = async (domain, page) => 
         followersCount: item.followersCount,
         followingCount: item.followingCount,
         createdAt: new Date(item.createdAt),
-        bot: null,
-        lastStatusAt: null,
-        statusesCount: null,
+        bot: undefined,
+        lastStatusAt: undefined,
+        statusesCount: undefined,
         type: 'channel',
         parentFeed: {
           name: item.ownerAccount.name,

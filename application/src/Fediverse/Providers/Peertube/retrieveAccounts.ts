@@ -57,11 +57,11 @@ export const retrieveAccounts:FeedProviderMethod = async (domain, page) => {
         followersCount: item.followersCount,
         followingCount: item.followingCount,
         createdAt: new Date(item.createdAt),
-        bot: null,
-        lastStatusAt: null,
-        statusesCount: null,
+        bot: undefined,
+        lastStatusAt: undefined,
+        statusesCount: undefined,
         type: 'account',
-        parentFeed: null
+        parentFeed: undefined
       }
     })
 }

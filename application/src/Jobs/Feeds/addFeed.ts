@@ -1,28 +1,15 @@
-import { Node, PrismaClient, Feed } from '@prisma/client'
 import { FeedData } from '../../Fediverse/Providers/FeedData'
-import { createMissingTags } from '../../Storage/Tags/createMissingTags'
-import { createFeedTags } from '../../Storage/Tags/createFeedTags'
-import { fetchTags } from '../../Storage/Tags/fetchTags'
 import { extractTags } from '../../StringTools/extractTags'
 import { extractEmails } from '../../StringTools/extractEmails'
-import { createFeedFields } from '../../Storage/Fields/createFeedFields'
-import { createFeedEmails } from '../../Storage/Emails/createFeedEmails'
 import { createFeed } from '../../Storage/Feeds/createFeed'
 import prepareFulltext from './prepareFulltext'
+import Feed from '../../Storage/Definitions/Feed'
+import Node from '../../Storage/Definitions/Node'
+import { ElasticClient } from '../../Storage/ElasticClient'
 
-export const addFeed = async (prisma: PrismaClient, node: Node, feedData: FeedData): Promise<Feed> => {
+export const addFeed = async (elastic: ElasticClient, node: Node, feedData: FeedData): Promise<Feed> => {
   const fulltext = prepareFulltext(feedData, node)
-  const feed = await createFeed(prisma, { ...feedData, fulltext }, node)
-
-  await createFeedFields(prisma, feed, feedData.fields)
-
-  const tagNames = extractTags(fulltext)
-  await createMissingTags(prisma, tagNames)
-  const tags = await fetchTags(prisma, tagNames)
-  await createFeedTags(prisma, feed, tags)
-
-  const emails = extractEmails(fulltext)
-  await createFeedEmails(prisma, feed, emails)
-
-  return feed
+  const extractedTags = extractTags(fulltext)
+  const extractedEmails = extractEmails(fulltext)
+  return await createFeed(elastic, { ...feedData, extractedTags, extractedEmails }, node)
 }

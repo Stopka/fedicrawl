@@ -6,17 +6,17 @@ export interface FeedData {
     description:string,
     followersCount: number,
     followingCount:number,
-    statusesCount:number,
-    bot:boolean,
+    statusesCount?:number,
+    bot?:boolean,
     url: string,
-    avatar:string|null,
+    avatar?:string,
     locked:boolean,
-    lastStatusAt:Date|null,
+    lastStatusAt?:Date,
     createdAt:Date
     fields: FieldData[],
     type: 'account'|'channel'
-    parentFeed: {
+    parentFeed?: {
         name:string
         hostDomain:string
-    }|null
+    }
 }

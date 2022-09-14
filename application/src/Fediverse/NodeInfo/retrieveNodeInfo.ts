@@ -4,6 +4,7 @@ import { assertSuccessJsonResponse } from '../assertSuccessJsonResponse'
 import { getDefaultTimeoutMilliseconds } from '../getDefaultTimeoutMilliseconds'
 
 const schema = z.object({
+  name: z.string().optional(),
   software: z.object({
     name: z.string(),
     version: z.string()

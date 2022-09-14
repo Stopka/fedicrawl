@@ -1,20 +1,22 @@
 FROM node:16-bullseye AS build
-ENV POSTGRES_URL='postgresql://fedisearch:passwd@postgres:5432/fedisearch?schema=public' \
+ENV ELASTIC_URL='http://elastic:9200' \
+    ELASTIC_USER='elastic' \
+    ELASTIC_PASSWORD='' \
     SEED_NODE_DOMAIN='mastodon.social' \
     REATTEMPT_MINUTES='60' \
     REFRESH_HOURS='120' \
     WAIT_FOR_JOB_MINUTES='60' \
     DEFAULT_TIMEOUT_MILLISECONDS='10000' \
+    BANNED_DOMAINS='' \
     TZ='UTC'
 WORKDIR /srv
 COPY application/package*.json ./
-COPY application/prisma ./prisma/
 RUN npm install
 COPY application/. .
 RUN npm run build
 
 FROM build AS dev
-CMD npm run dev
+CMD npx tsc --watch
 
 FROM node:16-bullseye AS prod
 RUN groupadd -g 1001 nodejs
@@ -22,7 +24,6 @@ RUN useradd -u 1001 -g 1001 nextjs
 WORKDIR /srv
 USER nextjs
 COPY --from=build /srv/node_modules ./node_modules
-COPY --from=build /srv/prisma ./prisma
 COPY --from=build /srv/package*.json ./
 COPY --from=build /srv/dist ./dist
 CMD npm run start:deploy

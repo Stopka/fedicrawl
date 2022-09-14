@@ -1,12 +1,13 @@
-import { Node, PrismaClient } from '@prisma/client'
 import { retrieveDomainNodeInfo } from '../../Fediverse/NodeInfo/retrieveDomainNodeInfo'
-import { updateNode } from '../../Storage/Nodes/updateNode'
+import { updateNodeInfo } from '../../Storage/Nodes/updateNodeInfo'
+import Node from '../../Storage/Definitions/Node'
+import { ElasticClient } from '../../Storage/ElasticClient'
 
-export const refreshNodeInfo = async (prisma: PrismaClient, node:Node):Promise<Node> => {
+export const refreshNodeInfo = async (elastic: ElasticClient, node:Node):Promise<Node> => {
   console.info('Updating info of node', { nodeDomain: node.domain })
   try {
     const nodeInfo = await retrieveDomainNodeInfo(node.domain)
-    return await updateNode(prisma, node, nodeInfo)
+    return await updateNodeInfo(elastic, node, nodeInfo)
   } catch (error) {
     console.warn('Failed to update node info: ' + error)
     return node
