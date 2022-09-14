@@ -1,4 +1,4 @@
-FROM node:16-bullseye AS build
+FROM node:18-bullseye AS build
 ENV ELASTIC_URL='http://elastic:9200' \
     ELASTIC_USER='elastic' \
     ELASTIC_PASSWORD='' \
@@ -20,7 +20,7 @@ CMD npx tsc --watch
 
 FROM node:16-bullseye AS prod
 RUN groupadd -g 1001 nodejs
-RUN useradd -u 1001 -g 1001 nextjs
+RUN useradd -m -u 1001 -g 1001 nextjs
 WORKDIR /srv
 USER nextjs
 COPY --from=build /srv/node_modules ./node_modules
