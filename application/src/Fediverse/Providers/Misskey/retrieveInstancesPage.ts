@@ -13,29 +13,34 @@ const schema = z.array(
   })
 )
 
-export const retrieveInstancesPage:NodeProviderMethod = async (domain, page) => {
-  const response = await axios.post('https://' + domain + '/api/federation/instances', {
-    host: null,
-    blocked: null,
-    notResponding: null,
-    suspended: null,
-    federating: null,
-    subscribing: null,
-    publishing: null,
-    limit: limit,
-    offset: page * limit,
-    sort: '+id'
-  }, {
-    timeout: getDefaultTimeoutMilliseconds()
-  })
+export const retrieveInstancesPage: NodeProviderMethod = async (
+  domain,
+  page
+) => {
+  const response = await axios.post(
+    'https://' + domain + '/api/federation/instances',
+    {
+      host: null,
+      blocked: null,
+      notResponding: null,
+      suspended: null,
+      federating: null,
+      subscribing: null,
+      publishing: null,
+      limit,
+      offset: page * limit,
+      sort: '+id'
+    },
+    {
+      timeout: getDefaultTimeoutMilliseconds()
+    }
+  )
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)
   if (responseData.length === 0) {
     throw new NoMoreNodesError('instance')
   }
-  return responseData.map(
-    item => {
-      return item.host
-    }
-  )
+  return responseData.map((item) => {
+    return item.host
+  })
 }

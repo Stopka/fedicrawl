@@ -7,16 +7,21 @@ import { retrieveFollowers } from './retrieveFollowers'
 
 const PeertubeProvider: Provider = {
   getKey: () => 'peertube',
-  getNodeProviders: ():NodeProvider[] => [{
-    getKey: () => 'followers',
-    retrieveNodes: retrieveFollowers
-  }],
-  getFeedProviders: ():FeedProvider[] => [{
-    getKey: () => 'accounts',
-    retrieveFeeds: retrieveAccounts
-  }, {
-    getKey: () => 'video-channels',
-    retrieveFeeds: retrieveVideoChannels
-  }]
+  getNodeProviders: (): NodeProvider[] => [
+    {
+      getKey: () => 'followers',
+      retrieveNodes: retrieveFollowers
+    }
+  ],
+  getFeedProviders: (): FeedProvider[] => [
+    {
+      getKey: () => 'accounts',
+      retrieveFeeds: retrieveAccounts
+    },
+    {
+      getKey: () => 'video-channels',
+      retrieveFeeds: retrieveVideoChannels
+    }
+  ]
 }
 export default PeertubeProvider

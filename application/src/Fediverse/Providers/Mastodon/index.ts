@@ -6,14 +6,18 @@ import { FeedProvider } from '../FeedProvider'
 
 const MastodonProvider: Provider = {
   getKey: () => 'mastodon',
-  getNodeProviders: ():NodeProvider[] => [{
-    getKey: () => 'peers',
-    retrieveNodes: retrievePeers
-  }],
-  getFeedProviders: ():FeedProvider[] => [{
-    getKey: () => 'users',
-    retrieveFeeds: retrieveLocalPublicUsersPage
-  }]
+  getNodeProviders: (): NodeProvider[] => [
+    {
+      getKey: () => 'peers',
+      retrieveNodes: retrievePeers
+    }
+  ],
+  getFeedProviders: (): FeedProvider[] => [
+    {
+      getKey: () => 'users',
+      retrieveFeeds: retrieveLocalPublicUsersPage
+    }
+  ]
 }
 
 export default MastodonProvider

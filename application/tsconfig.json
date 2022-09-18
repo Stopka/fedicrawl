@@ -7,7 +7,8 @@
     "outDir": "./dist/",
     "sourceMap": true,
     "alwaysStrict": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "strictNullChecks": true,
   },
   "files": ["./src/app.ts"]
 }

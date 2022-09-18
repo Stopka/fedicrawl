@@ -12,9 +12,9 @@ ENV ELASTIC_URL='http://elastic:9200' \
 FROM prebuild AS build
 WORKDIR /srv
 COPY application/package*.json ./
-RUN npm install
+RUN yarn
 COPY application/. .
-RUN npm run build
+RUN yarn build
 
 FROM build AS dev
 CMD npx tsc --watch

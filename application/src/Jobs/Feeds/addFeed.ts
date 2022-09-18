@@ -7,9 +7,17 @@ import Feed from '../../Storage/Definitions/Feed'
 import Node from '../../Storage/Definitions/Node'
 import { ElasticClient } from '../../Storage/ElasticClient'
 
-export const addFeed = async (elastic: ElasticClient, node: Node, feedData: FeedData): Promise<Feed> => {
+export const addFeed = async (
+  elastic: ElasticClient,
+  node: Node,
+  feedData: FeedData
+): Promise<Feed> => {
   const fulltext = prepareFulltext(feedData, node)
   const extractedTags = extractTags(fulltext)
   const extractedEmails = extractEmails(fulltext)
-  return await createFeed(elastic, { ...feedData, extractedTags, extractedEmails }, node)
+  return await createFeed(
+    elastic,
+    { ...feedData, extractedTags, extractedEmails },
+    node
+  )
 }

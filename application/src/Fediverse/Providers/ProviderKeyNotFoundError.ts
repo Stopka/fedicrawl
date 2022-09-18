@@ -1,8 +1,8 @@
-export class ProviderKeyAlreadyRegisteredError extends Error {
+export class ProviderKeyNotFoundError extends Error {
   private readonly _key: string
 
   public constructor (key: string) {
-    super(`Provider with the key ${key} is already registered`)
+    super(`Provider with the key ${key} is not registered`)
     this._key = key
   }
 

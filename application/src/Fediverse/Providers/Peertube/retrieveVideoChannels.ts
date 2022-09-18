@@ -36,7 +36,10 @@ const schema = z.object({
   )
 })
 
-export const retrieveVideoChannels:FeedProviderMethod = async (domain, page) => {
+export const retrieveVideoChannels: FeedProviderMethod = async (
+  domain,
+  page
+) => {
   const response = await axios.get(`https://${domain}/api/v1/video-channels`, {
     params: {
       count: limit,
@@ -51,17 +54,18 @@ export const retrieveVideoChannels:FeedProviderMethod = async (domain, page) => 
     throw new NoMoreFeedsError('channel')
   }
   return responseData.data
-    .filter(item => item.host === domain)
-    .map((item):FeedData => {
-      const fields:FieldData[] = item.support
-        ? [{ name: 'support', value: item.support, verifiedAt: undefined }]
-        : []
+    .filter((item) => item.host === domain)
+    .map((item): FeedData => {
+      const fields: FieldData[] =
+        item.support !== null
+          ? [{ name: 'support', value: item.support, verifiedAt: undefined }]
+          : []
       return {
         name: item.name,
         url: item.url ?? `https://${domain}/video-channels/${item.name}/`,
         avatar: parseAvatarUrl(item.avatar, domain),
         locked: false,
-        fields: fields,
+        fields,
         description: parseDescription(item.description),
         displayName: item.displayName,
         followersCount: item.followersCount,

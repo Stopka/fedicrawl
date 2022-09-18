@@ -29,7 +29,7 @@ const schema = z.object({
   )
 })
 
-export const retrieveAccounts:FeedProviderMethod = async (domain, page) => {
+export const retrieveAccounts: FeedProviderMethod = async (domain, page) => {
   const response = await axios.get(`https://${domain}/api/v1/accounts`, {
     params: {
       count: limit,
@@ -44,8 +44,8 @@ export const retrieveAccounts:FeedProviderMethod = async (domain, page) => {
     throw new NoMoreFeedsError('account')
   }
   return responseData.data
-    .filter(item => item.host === domain)
-    .map((item):FeedData => {
+    .filter((item) => item.host === domain)
+    .map((item): FeedData => {
       return {
         name: item.name,
         url: item.url ?? `https://${domain}/accounts/${item.name}/`,

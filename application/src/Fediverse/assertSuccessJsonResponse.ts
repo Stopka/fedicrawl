@@ -2,7 +2,9 @@ import { AxiosResponse } from 'axios'
 import { UnexpectedResponseStatusError } from './UnexpectedResponseStatusError'
 import { UnexpectedContentTypeError } from './UnexpectedContentTypeError'
 
-export const assertSuccessJsonResponse = (response: AxiosResponse<unknown>): void => {
+export const assertSuccessJsonResponse = (
+  response: AxiosResponse<unknown>
+): void => {
   const expectedStatus = 200
   const actualStatus = response.status
   if (actualStatus !== expectedStatus) {

@@ -4,6 +4,8 @@ import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
 import { FeedProviderMethod } from '../FeedProviderMethod'
+import { FeedData } from '../FeedData'
+import { FieldData } from '../FieldData'
 
 const limit = 100
 
@@ -42,72 +44,84 @@ const schema = z.array(
 type Emoji = z.infer<typeof emojiSchema>
 
 const replaceEmojis = (text: string, emojis: Emoji[]): string => {
-  emojis.forEach(emoji => {
+  emojis.forEach((emoji) => {
     text = text.replace(
       RegExp(`:${emoji.name}:`, 'gi'),
-            `<img draggable="false" class="emoji" title="${emoji.name}" alt="${emoji.name}" src="${emoji.url}" />`
+      `<img draggable="false" class="emoji" title="${emoji.name}" alt="${emoji.name}" src="${emoji.url}" />`
     )
   })
   return text
 }
 
-const parseDescription = (description:string|null):string => {
+const parseDescription = (description: string | null): string => {
   if (typeof description !== 'string') {
     return ''
   }
-  return description.split('\n\n').map(paragraph => {
-    paragraph = paragraph.replace('\n', '</br>\n')
-    return `<p>${paragraph}</p>`
-  }).join('\n')
+  return description
+    .split('\n\n')
+    .map((paragraph) => {
+      paragraph = paragraph.replace('\n', '</br>\n')
+      return `<p>${paragraph}</p>`
+    })
+    .join('\n')
 }
 
-export const retrieveUsersPage:FeedProviderMethod = async (domain, page) => {
-  const response = await axios.post('https://' + domain + '/api/users', {
-    state: 'all',
-    origin: 'local',
-    sort: '+createdAt',
-    limit: limit,
-    offset: limit * page
-  }, {
-    timeout: getDefaultTimeoutMilliseconds()
-  })
+export const retrieveUsersPage: FeedProviderMethod = async (
+  domain,
+  page
+): Promise<FeedData[]> => {
+  const response = await axios.post(
+    'https://' + domain + '/api/users',
+    {
+      state: 'all',
+      origin: 'local',
+      sort: '+createdAt',
+      limit,
+      offset: limit * page
+    },
+    {
+      timeout: getDefaultTimeoutMilliseconds()
+    }
+  )
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)
   if (responseData.length === 0) {
     throw new NoMoreFeedsError('user')
   }
-  return responseData.map(
-    item => {
-      return {
-        name: item.username,
-        displayName: replaceEmojis(item.name ?? item.username, item.emojis),
-        description: replaceEmojis(parseDescription(item.description ?? ''), item.emojis),
-        followersCount: item.followersCount,
-        followingCount: item.followingCount,
-        statusesCount: item.notesCount,
-        bot: item.isBot,
-        url: `https://${domain}/@${item.username}`,
-        avatar: item.avatarUrl,
-        locked: item.isLocked,
-        lastStatusAt: item.updatedAt !== null ? new Date(item.updatedAt) : undefined,
-        createdAt: new Date(item.createdAt),
-        fields: [
-          ...item.fields.map(field => {
-            return {
-              name: replaceEmojis(field.name, item.emojis),
-              value: replaceEmojis(field.value, item.emojis),
-              verifiedAt: undefined
-            }
-          }),
-          ...[
-            { name: 'Location', value: item.location, verifiedAt: undefined },
-            { name: 'Birthday', value: item.birthday, verifiedAt: undefined },
-            { name: 'Language', value: item.lang, verifiedAt: undefined }
-          ].filter(field => field.value !== null)
-        ],
-        type: 'account',
-        parentFeed: undefined
-      }
+  return responseData.map((item) => {
+    return {
+      name: item.username,
+      displayName: replaceEmojis(item.name ?? item.username, item.emojis),
+      description: replaceEmojis(
+        parseDescription(item.description ?? ''),
+        item.emojis
+      ),
+      followersCount: item.followersCount,
+      followingCount: item.followingCount,
+      statusesCount: item.notesCount,
+      bot: item.isBot,
+      url: `https://${domain}/@${item.username}`,
+      avatar: item.avatarUrl ?? undefined,
+      locked: item.isLocked,
+      lastStatusAt:
+        item.updatedAt !== null ? new Date(item.updatedAt) : undefined,
+      createdAt: new Date(item.createdAt),
+      fields: [
+        ...item.fields.map((field) => {
+          return {
+            name: replaceEmojis(field.name, item.emojis),
+            value: replaceEmojis(field.value, item.emojis),
+            verifiedAt: undefined
+          }
+        }),
+        ...([
+          { name: 'Location', value: item.location, verifiedAt: undefined },
+          { name: 'Birthday', value: item.birthday, verifiedAt: undefined },
+          { name: 'Language', value: item.lang, verifiedAt: undefined }
+        ].filter((field) => field.value !== null) as FieldData[])
+      ],
+      type: 'account',
+      parentFeed: undefined
     }
-  )
+  })
 }

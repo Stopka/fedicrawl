@@ -5,10 +5,18 @@ import { ElasticClient } from '../../Storage/ElasticClient'
 import isDomainNotBanned from '../../Storage/Nodes/isDomainNotBanned'
 
 export const findNewNodesOnPage = async (
-  elastic: ElasticClient, provider: NodeProvider, node:Node, page:number
-):Promise<number> => {
+  elastic: ElasticClient,
+  provider: NodeProvider,
+  node: Node,
+  page: number
+): Promise<number> => {
   let domains = await provider.retrieveNodes(node.domain, page)
   domains = domains.filter(isDomainNotBanned)
-  console.log('Found nodes', { count: domains.length, domain: node.domain, provider: provider.getKey(), page: page })
+  console.log('Found nodes', {
+    count: domains.length,
+    domain: node.domain,
+    provider: provider.getKey(),
+    page
+  })
   return await createMissingNodes(elastic, domains, node.domain)
 }

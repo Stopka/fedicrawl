@@ -6,7 +6,7 @@ const elasticClient = new Client({
   },
   auth: {
     username: process.env.ELASTIC_USER ?? 'elastic',
-    password: process.env.ELASTIC_PASSWORD
+    password: process.env.ELASTIC_PASSWORD ?? ''
   }
 })
 

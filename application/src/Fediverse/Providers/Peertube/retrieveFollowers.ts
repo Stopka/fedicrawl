@@ -21,19 +21,22 @@ const schema = z.object({
   )
 })
 
-export const retrieveFollowers:NodeProviderMethod = async (domain, page) => {
-  const response = await axios.get(`https://${domain}/api/v1/server/followers`, {
-    params: {
-      count: limit,
-      sort: 'createdAt',
-      start: page * limit
-    },
-    timeout: getDefaultTimeoutMilliseconds()
-  })
+export const retrieveFollowers: NodeProviderMethod = async (domain, page) => {
+  const response = await axios.get(
+    `https://${domain}/api/v1/server/followers`,
+    {
+      params: {
+        count: limit,
+        sort: 'createdAt',
+        start: page * limit
+      },
+      timeout: getDefaultTimeoutMilliseconds()
+    }
+  )
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)
   const hosts = new Set<string>()
-  responseData.data.forEach(item => {
+  responseData.data.forEach((item) => {
     hosts.add(item.follower.host)
     hosts.add(item.following.host)
   })

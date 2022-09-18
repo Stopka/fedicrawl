@@ -1,5 +1,5 @@
-export interface FieldData{
-    name: string,
-    value: string,
-    verifiedAt: Date|undefined
+export interface FieldData {
+  name: string
+  value: string
+  verifiedAt: Date | undefined
 }

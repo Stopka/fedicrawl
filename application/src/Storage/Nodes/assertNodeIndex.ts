@@ -2,14 +2,14 @@ import { ElasticClient } from '../ElasticClient'
 import nodeIndex from '../Definitions/nodeIndex'
 import dateProperty from '../Properties/dateProperty'
 
-const assertNodeIndex = async (elastic: ElasticClient):Promise<void> => {
+const assertNodeIndex = async (elastic: ElasticClient): Promise<void> => {
   console.info('Setting node pipeline')
   await elastic.ingest.putPipeline({
     id: 'node',
     description: 'Default node pipeline',
     processors: [
       {
-        // @ts-ignore
+        // @ts-expect-error
         geoip: {
           ignore_missing: true,
           field: 'serverIps',

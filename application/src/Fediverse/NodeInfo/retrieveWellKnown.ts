@@ -15,7 +15,7 @@ const wellKnownSchema = z.object({
 export type WellKnown = z.infer<typeof wellKnownSchema>
 
 export const retrieveWellKnown = async (domain: string): Promise<WellKnown> => {
-  console.info('Retrieving well known', { domain: domain })
+  console.info('Retrieving well known', { domain })
   const wellKnownUrl = `https://${domain}/.well-known/nodeinfo`
   const wellKnownResponse = await axios.get(wellKnownUrl, {
     timeout: getDefaultTimeoutMilliseconds(),

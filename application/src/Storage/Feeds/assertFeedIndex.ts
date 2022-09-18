@@ -9,7 +9,7 @@ const assertFeedIndex = async (elastic: ElasticClient): Promise<void> => {
   await elastic.ingest.putPipeline({
     id: 'feed',
     description: 'Default feed pipeline',
-    processors: processors
+    processors
   })
   console.info('Checking feed index')
   const exists = await elastic.indices.exists({
@@ -31,12 +31,8 @@ const assertFeedIndex = async (elastic: ElasticClient): Promise<void> => {
             html: {
               type: 'custom',
               tokenizer: 'standard',
-              filter: [
-                'lowercase'
-              ],
-              char_filter: [
-                'html_strip'
-              ]
+              filter: ['lowercase'],
+              char_filter: ['html_strip']
             }
           }
         }

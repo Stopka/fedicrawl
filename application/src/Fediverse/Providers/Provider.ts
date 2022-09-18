@@ -2,9 +2,9 @@ import { NodeProvider } from './NodeProvider'
 import { FeedProvider } from './FeedProvider'
 
 export interface Provider {
-    getKey(): string
+  getKey: () => string
 
-    getNodeProviders(): NodeProvider[]
+  getNodeProviders: () => NodeProvider[]
 
-    getFeedProviders(): FeedProvider[]
+  getFeedProviders: () => FeedProvider[]
 }

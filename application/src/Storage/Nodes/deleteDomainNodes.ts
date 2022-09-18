@@ -1,13 +1,16 @@
 import { ElasticClient } from '../ElasticClient'
 import nodeIndex from '../Definitions/nodeIndex'
 
-export const deleteDomainNodes = async (elastic: ElasticClient, domains:string[]): Promise<number> => {
+export const deleteDomainNodes = async (
+  elastic: ElasticClient,
+  domains: string[]
+): Promise<number> => {
   await elastic.indices.refresh({ index: nodeIndex })
   const result = await elastic.deleteByQuery({
     index: nodeIndex,
     query: {
       bool: {
-        should: domains.map(domain => {
+        should: domains.map((domain) => {
           return {
             regexp: {
               domain: {
@@ -22,7 +25,8 @@ export const deleteDomainNodes = async (elastic: ElasticClient, domains:string[]
     }
   })
   console.info('Deleted domain nodes', {
-    count: result.deleted, domains
+    count: result.deleted ?? 0,
+    domains
   })
-  return result.deleted
+  return result.deleted ?? 0
 }

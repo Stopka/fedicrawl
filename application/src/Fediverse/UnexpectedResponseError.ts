@@ -1,3 +1,1 @@
-export class UnexpectedResponseError extends Error {
-
-}
+export class UnexpectedResponseError extends Error {}

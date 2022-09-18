@@ -4,8 +4,13 @@ import feedIndex from '../Definitions/feedIndex'
 import getFeed from './getFeed'
 import Feed from '../Definitions/Feed'
 import Node from '../Definitions/Node'
+import assertDefined from '../assertDefined'
 
-export const createFeed = async (elastic: ElasticClient, feedData: StorageFeedData, node: Node): Promise<Feed> => {
+export const createFeed = async (
+  elastic: ElasticClient,
+  feedData: StorageFeedData,
+  node: Node
+): Promise<Feed> => {
   const fullName = `${feedData.name}@${node.domain}`
   await elastic.create<Feed>({
     index: feedIndex,
@@ -25,8 +30,8 @@ export const createFeed = async (elastic: ElasticClient, feedData: StorageFeedDa
       displayName: feedData.displayName,
       locked: feedData.locked,
       createdAt: feedData.createdAt.getTime(),
-      foundAt: (new Date()).getTime(),
-      fields: feedData.fields.map(field => {
+      foundAt: new Date().getTime(),
+      fields: feedData.fields.map((field) => {
         return { name: field.name, value: field.value }
       }),
       extractedEmails: feedData.extractedEmails,
@@ -36,6 +41,12 @@ export const createFeed = async (elastic: ElasticClient, feedData: StorageFeedDa
       type: feedData.type
     }
   })
-  console.info('Created new feed', { feedName: feedData.name, nodeDomain: node.domain })
-  return getFeed(elastic, fullName)
+  console.info('Created new feed', {
+    feedName: feedData.name,
+    nodeDomain: node.domain
+  })
+  return assertDefined(
+    await getFeed(elastic, fullName),
+    'Missing feed after creating it'
+  )
 }

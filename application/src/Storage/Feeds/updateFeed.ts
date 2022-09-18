@@ -3,8 +3,13 @@ import Feed from '../Definitions/Feed'
 import { ElasticClient } from '../ElasticClient'
 import feedIndex from '../Definitions/feedIndex'
 import getFeed from './getFeed'
+import assertDefined from '../assertDefined'
 
-export const updateFeed = async (elastic: ElasticClient, feed:Feed, feedData:StorageFeedData):Promise<Feed> => {
+export const updateFeed = async (
+  elastic: ElasticClient,
+  feed: Feed,
+  feedData: StorageFeedData
+): Promise<Feed> => {
   await elastic.update<Feed>({
     index: feedIndex,
     id: feed.fullName,
@@ -20,9 +25,9 @@ export const updateFeed = async (elastic: ElasticClient, feed:Feed, feedData:Sto
       displayName: feedData.displayName,
       locked: feedData.locked,
       createdAt: feedData.createdAt,
-      refreshedAt: (new Date()).getTime(),
+      refreshedAt: new Date().getTime(),
       type: feedData.type,
-      fields: feedData.fields.map(field => {
+      fields: feedData.fields.map((field) => {
         return { name: field.name, value: field.value }
       }),
       extractedEmails: feedData.extractedEmails,
@@ -30,5 +35,8 @@ export const updateFeed = async (elastic: ElasticClient, feed:Feed, feedData:Sto
     }
   })
   console.info('Updated feed', { feedName: feed.name, nodeDomain: feed.domain })
-  return getFeed(elastic, feed.fullName)
+  return assertDefined(
+    await getFeed(elastic, feed.fullName),
+    'Missing updated feed'
+  )
 }

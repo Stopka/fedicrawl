@@ -3,15 +3,20 @@ import Node from '../Definitions/Node'
 import { ElasticClient } from '../ElasticClient'
 import nodeIndex from '../Definitions/nodeIndex'
 import getNode from './getNode'
+import assertDefined from '../assertDefined'
 
-const assertPositiveInt = (number:number|undefined):number|undefined => {
+const assertPositiveInt = (number: number | undefined): number | undefined => {
   if (number === undefined) {
     return undefined
   }
   return Math.max(0, Math.round(number))
 }
 
-export const updateNodeInfo = async (elastic: ElasticClient, node: Node, nodeInfo:NodeInfo):Promise<Node> => {
+export const updateNodeInfo = async (
+  elastic: ElasticClient,
+  node: Node,
+  nodeInfo: NodeInfo
+): Promise<Node> => {
   await elastic.update<Node>({
     index: nodeIndex,
     id: node.domain,
@@ -20,14 +25,21 @@ export const updateNodeInfo = async (elastic: ElasticClient, node: Node, nodeInf
       openRegistrations: nodeInfo?.openRegistrations,
       softwareName: nodeInfo?.software?.name?.toLocaleLowerCase(),
       softwareVersion: nodeInfo?.software?.version,
-      halfYearActiveUserCount: assertPositiveInt(nodeInfo?.usage?.users?.activeHalfyear),
-      monthActiveUserCount: assertPositiveInt(nodeInfo?.usage?.users.activeMonth),
+      halfYearActiveUserCount: assertPositiveInt(
+        nodeInfo?.usage?.users?.activeHalfyear
+      ),
+      monthActiveUserCount: assertPositiveInt(
+        nodeInfo?.usage?.users?.activeMonth
+      ),
       statusesCount: assertPositiveInt(nodeInfo?.usage?.localPosts),
       totalUserCount: assertPositiveInt(nodeInfo?.usage?.users?.total)
     }
   })
 
-  const resultNode = await getNode(elastic, node.domain)
+  const resultNode = assertDefined(
+    await getNode(elastic, node.domain),
+    'Missing node after updating it'
+  )
   console.info('Updated node info', { node })
   return resultNode
 }
