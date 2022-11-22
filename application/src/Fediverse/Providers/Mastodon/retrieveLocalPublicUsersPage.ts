@@ -6,7 +6,7 @@ import { FeedProviderMethod } from '../FeedProviderMethod'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
 import { FeedData } from '../FeedData'
 
-const limit = 500
+const limit = 40
 
 const emojiSchema = z.object({
   shortcode: z.string(),
