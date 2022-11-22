@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import robotsParser from 'robots-parser'
+import { getDefaultTimeoutMilliseconds } from '../getDefaultTimeoutMilliseconds.js'
 import RobotsTxt from './RobotsTxt.js'
 import { RobotsTxtError } from './RobotsTxtError.js'
 
@@ -10,7 +11,10 @@ export default async function fetchRobotsTxt (domain: string): Promise<RobotsTxt
   const url = `https://${domain}/robots.txt`
   let content = ''
   try {
-    const robotsTxt = await axios.get(url)
+    const robotsTxt = await axios.get(url, {
+      headers: { 'User-Agent': userAgent },
+      timeout: getDefaultTimeoutMilliseconds()
+    })
     content = robotsTxt.data
   } catch (error) {
     console.info('Robots.txt not found', { error, url })
