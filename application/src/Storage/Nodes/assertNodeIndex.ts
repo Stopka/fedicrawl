@@ -9,7 +9,6 @@ const assertNodeIndex = async (elastic: ElasticClient): Promise<void> => {
     description: 'Default node pipeline',
     processors: [
       {
-        // @ts-expect-error
         geoip: {
           ignore_missing: true,
           field: 'serverIps',
