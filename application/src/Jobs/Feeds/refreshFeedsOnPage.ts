@@ -13,7 +13,7 @@ export const refreshFeedsOnPage = async (
   robotsTxt: RobotsTxt
 ): Promise<Feed[]> => {
   const feedData = await provider.retrieveFeeds(node.domain, page, robotsTxt)
-  const indexableFeedData = feedData.filter(item => item.indexable && !item.description.includes('#noindex'))
+  const indexableFeedData = feedData.filter(item => item.indexable && !item.description.includes('#nobot'))
   console.info('Retrieved feeds', {
     count: feedData.length,
     indexableCount: indexableFeedData.length,
