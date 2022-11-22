@@ -1,3 +1,4 @@
+import fetchRobotsTxt from '../Fediverse/RobotsTxt/fetchRobotsTxt.js'
 import { fetchNodeToProcess } from '../Storage/Nodes/fetchNodeToProcess'
 import { ProviderRegistry } from '../Fediverse/Providers/ProviderRegistry'
 import { setNodeRefreshed } from '../Storage/Nodes/setNodeRefreshed'
@@ -21,7 +22,8 @@ export const processNextNode = async (
   node = await setNodeRefreshAttempted(elastic, node)
 
   node = await refreshNodeIps(elastic, node)
-  node = await refreshNodeInfo(elastic, node)
+  const robotsTxt = await fetchRobotsTxt(node.domain)
+  node = await refreshNodeInfo(elastic, node, robotsTxt)
 
   const softwareName = node.softwareName ?? ''
   if (!providerRegistry.containsKey(softwareName)) {
@@ -41,7 +43,7 @@ export const processNextNode = async (
         domain: node.domain,
         provider: nodeProvider.getKey()
       })
-      return await findNewNodes(elastic, nodeProvider, node)
+      return await findNewNodes(elastic, nodeProvider, node, robotsTxt)
     })
   )
 
@@ -51,7 +53,7 @@ export const processNextNode = async (
         domain: node.domain,
         provider: feedProvider.getKey()
       })
-      return await refreshFeeds(elastic, feedProvider, node)
+      return await refreshFeeds(elastic, feedProvider, node, robotsTxt)
     })
   )
 

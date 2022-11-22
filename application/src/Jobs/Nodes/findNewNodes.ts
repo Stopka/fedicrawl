@@ -1,4 +1,5 @@
 import { NodeProvider } from '../../Fediverse/Providers/NodeProvider'
+import RobotsTxt from '../../Fediverse/RobotsTxt/RobotsTxt.js'
 import { findNewNodesOnPage } from './findNewNodesOnPage'
 import Node from '../../Storage/Definitions/Node'
 import { ElasticClient } from '../../Storage/ElasticClient'
@@ -6,7 +7,8 @@ import { ElasticClient } from '../../Storage/ElasticClient'
 export const findNewNodes = async (
   elastic: ElasticClient,
   provider: NodeProvider,
-  node: Node
+  node: Node,
+  robotsTxt: RobotsTxt
 ): Promise<void> => {
   try {
     // noinspection InfiniteLoopJS
@@ -15,7 +17,7 @@ export const findNewNodes = async (
         domain: node.domain,
         provider: provider.getKey()
       })
-      await findNewNodesOnPage(elastic, provider, node, page)
+      await findNewNodesOnPage(elastic, provider, node, page, robotsTxt)
     }
   } catch (error) {
     console.info('Node search finished', {

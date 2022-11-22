@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
@@ -53,9 +52,10 @@ const replaceEmojis = (text: string, emojis: Emoji[]): string => {
 
 export const retrieveLocalPublicUsersPage: FeedProviderMethod = async (
   domain,
-  page
+  page,
+  robotsTxt
 ): Promise<FeedData[]> => {
-  const response = await axios.get('https://' + domain + '/api/v1/directory', {
+  const response = await robotsTxt.getIfAllowed(`https://${domain}/api/v1/directory`, {
     params: {
       limit,
       offset: page * limit,

@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
@@ -21,8 +20,8 @@ const schema = z.object({
   )
 })
 
-export const retrieveFollowers: NodeProviderMethod = async (domain, page) => {
-  const response = await axios.get(
+export const retrieveFollowers: NodeProviderMethod = async (domain, page, robotsTxt) => {
+  const response = await robotsTxt.getIfAllowed(
     `https://${domain}/api/v1/server/followers`,
     {
       params: {

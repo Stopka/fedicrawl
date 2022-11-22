@@ -1,3 +1,4 @@
+import RobotsTxt from '../../Fediverse/RobotsTxt/RobotsTxt.js'
 import { refreshFeedsOnPage } from './refreshFeedsOnPage'
 import { FeedProvider } from '../../Fediverse/Providers/FeedProvider'
 import Node from '../../Storage/Definitions/Node'
@@ -6,7 +7,8 @@ import { ElasticClient } from '../../Storage/ElasticClient'
 export const refreshFeeds = async (
   elastic: ElasticClient,
   provider: FeedProvider,
-  node: Node
+  node: Node,
+  robotsTxt: RobotsTxt
 ): Promise<void> => {
   try {
     // noinspection InfiniteLoopJS
@@ -16,7 +18,7 @@ export const refreshFeeds = async (
         provider: provider.getKey(),
         page
       })
-      await refreshFeedsOnPage(elastic, provider, node, page)
+      await refreshFeedsOnPage(elastic, provider, node, page, robotsTxt)
     }
   } catch (error) {
     console.info('Feed search finished', {

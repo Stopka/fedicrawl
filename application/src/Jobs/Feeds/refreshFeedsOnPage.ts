@@ -1,3 +1,4 @@
+import RobotsTxt from '../../Fediverse/RobotsTxt/RobotsTxt.js'
 import { refreshOrAddFeed } from './refreshOrAddFeed'
 import { FeedProvider } from '../../Fediverse/Providers/FeedProvider'
 import Node from '../../Storage/Definitions/Node'
@@ -8,9 +9,10 @@ export const refreshFeedsOnPage = async (
   elastic: ElasticClient,
   provider: FeedProvider,
   node: Node,
-  page: number
+  page: number,
+  robotsTxt: RobotsTxt
 ): Promise<Feed[]> => {
-  const feedData = await provider.retrieveFeeds(node.domain, page)
+  const feedData = await provider.retrieveFeeds(node.domain, page, robotsTxt)
   console.info('Retrieved feeds', {
     count: feedData.length,
     domain: node.domain,

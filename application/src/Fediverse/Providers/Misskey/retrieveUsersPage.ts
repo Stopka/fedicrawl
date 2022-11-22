@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
@@ -68,10 +67,11 @@ const parseDescription = (description: string | null): string => {
 
 export const retrieveUsersPage: FeedProviderMethod = async (
   domain,
-  page
+  page,
+  robotsTxt
 ): Promise<FeedData[]> => {
-  const response = await axios.post(
-    'https://' + domain + '/api/users',
+  const response = await robotsTxt.postIfAllowed(
+    `https://${domain}/api/users`,
     {
       state: 'all',
       origin: 'local',

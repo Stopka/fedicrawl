@@ -1,5 +1,4 @@
 import { FeedData } from '../FeedData'
-import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { avatarSchema } from './Avatar'
@@ -29,8 +28,8 @@ const schema = z.object({
   )
 })
 
-export const retrieveAccounts: FeedProviderMethod = async (domain, page) => {
-  const response = await axios.get(`https://${domain}/api/v1/accounts`, {
+export const retrieveAccounts: FeedProviderMethod = async (domain, page, robotsTxt) => {
+  const response = await robotsTxt.getIfAllowed(`https://${domain}/api/v1/accounts`, {
     params: {
       count: limit,
       sort: 'createdAt',

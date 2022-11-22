@@ -9,22 +9,6 @@ const assertNodeIndex = async (elastic: ElasticClient): Promise<void> => {
     description: 'Default node pipeline',
     processors: [
       {
-        geoip: {
-          ignore_missing: true,
-          field: 'serverIps',
-          properties: [
-            'location',
-            'continent_name',
-            'country_name',
-            'country_iso_code',
-            'region_iso_code',
-            'region_name',
-            'city_name'
-          ],
-          target_field: 'geoip'
-        }
-      },
-      {
         grok: {
           ignore_missing: true,
           field: 'softwareVersion',

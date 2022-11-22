@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
@@ -15,10 +14,11 @@ const schema = z.array(
 
 export const retrieveInstancesPage: NodeProviderMethod = async (
   domain,
-  page
+  page,
+  robotsTxt
 ) => {
-  const response = await axios.post(
-    'https://' + domain + '/api/federation/instances',
+  const response = await robotsTxt.postIfAllowed(
+    `https://${domain}/api/federation/instances`,
     {
       host: null,
       blocked: null,

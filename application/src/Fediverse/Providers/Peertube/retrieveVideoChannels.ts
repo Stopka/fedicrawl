@@ -1,5 +1,4 @@
 import { FeedData } from '../FeedData'
-import axios from 'axios'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { FieldData } from '../FieldData'
@@ -38,9 +37,10 @@ const schema = z.object({
 
 export const retrieveVideoChannels: FeedProviderMethod = async (
   domain,
-  page
+  page,
+  robotsTxt
 ) => {
-  const response = await axios.get(`https://${domain}/api/v1/video-channels`, {
+  const response = await robotsTxt.getIfAllowed(`https://${domain}/api/v1/video-channels`, {
     params: {
       count: limit,
       sort: 'createdAt',
