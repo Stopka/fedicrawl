@@ -60,7 +60,8 @@ export const retrieveAccounts: FeedProviderMethod = async (domain, page, robotsT
         lastStatusAt: undefined,
         statusesCount: undefined,
         type: 'account',
-        parentFeed: undefined
+        parentFeed: undefined,
+        indexable: true
       }
     })
 }

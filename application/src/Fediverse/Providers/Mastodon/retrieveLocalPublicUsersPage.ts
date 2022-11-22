@@ -34,7 +34,8 @@ const schema = z.array(
         value: z.string(),
         verified_at: z.nullable(z.string())
       })
-    )
+    ),
+    noindex: z.boolean().optional().nullable()
   })
 )
 
@@ -94,7 +95,8 @@ export const retrieveLocalPublicUsersPage: FeedProviderMethod = async (
         }
       }),
       type: 'account',
-      parentFeed: undefined
+      parentFeed: undefined,
+      indexable: !(item.noindex ?? false)
     }
   })
 }

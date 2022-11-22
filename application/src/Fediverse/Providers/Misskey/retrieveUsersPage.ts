@@ -121,7 +121,8 @@ export const retrieveUsersPage: FeedProviderMethod = async (
         ].filter((field) => field.value !== null) as FieldData[])
       ],
       type: 'account',
-      parentFeed: undefined
+      parentFeed: undefined,
+      indexable: true
     }
   })
 }

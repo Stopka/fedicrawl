@@ -19,4 +19,5 @@ export interface FeedData {
     name: string
     hostDomain: string
   }
+  indexable: boolean
 }

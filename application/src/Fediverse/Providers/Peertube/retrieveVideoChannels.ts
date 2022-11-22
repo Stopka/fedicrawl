@@ -78,7 +78,8 @@ export const retrieveVideoChannels: FeedProviderMethod = async (
         parentFeed: {
           name: item.ownerAccount.name,
           hostDomain: item.ownerAccount.host
-        }
+        },
+        indexable: true
       }
     })
 }

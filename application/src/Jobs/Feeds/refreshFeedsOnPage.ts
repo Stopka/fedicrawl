@@ -13,14 +13,16 @@ export const refreshFeedsOnPage = async (
   robotsTxt: RobotsTxt
 ): Promise<Feed[]> => {
   const feedData = await provider.retrieveFeeds(node.domain, page, robotsTxt)
+  const indexableFeedData = feedData.filter(item => item.indexable)
   console.info('Retrieved feeds', {
     count: feedData.length,
+    indexableCount: indexableFeedData.length,
     domain: node.domain,
     provider: provider.getKey(),
     page
   })
   return await Promise.all(
-    feedData.map(
+    indexableFeedData.map(
       async (feedDataItem) =>
         await refreshOrAddFeed(elastic, node, feedDataItem)
     )
