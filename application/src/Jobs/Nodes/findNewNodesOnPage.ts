@@ -20,5 +20,5 @@ export const findNewNodesOnPage = async (
     provider: provider.getKey(),
     page
   })
-  return await createMissingNodes(elastic, domains, node.domain)
+  return await createMissingNodes(elastic, domains, node.domain, node.crawlingDepth + 1)
 }

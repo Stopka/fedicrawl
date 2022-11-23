@@ -69,9 +69,12 @@ const assertNodeIndex = async (elastic: ElasticClient): Promise<void> => {
         }
       },
       accountFeedCount: { type: 'integer' },
-      channelFeedCount: { type: 'integer' }
+      channelFeedCount: { type: 'integer' },
+      crawlingDepth: { type: 'integer' },
+      crawlingVersion: { type: 'integer' }
     }
   })
+
   await elastic.indices.refresh({ index: nodeIndex })
 }
 

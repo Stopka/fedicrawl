@@ -20,6 +20,8 @@ interface Node {
   discoveredByDomain?: string
   accountFeedCount?: number
   channelFeedCount?: number
+  crawlingDepth: number
+  crawlingVersion: number
 }
 
 export default Node

@@ -1,3 +1,4 @@
+import getCrawlingVersion from '../../Fediverse/getCrawlingVersion.js'
 import { ElasticClient } from '../ElasticClient'
 import nodeIndex from '../Definitions/nodeIndex'
 import Node from '../Definitions/Node'
@@ -14,7 +15,8 @@ export const setNodeRefreshed = async (
     index: nodeIndex,
     id: node.domain,
     doc: {
-      refreshedAt: date.getTime()
+      refreshedAt: date.getTime(),
+      crawlingVersion: getCrawlingVersion()
     }
   })
   return assertDefined(

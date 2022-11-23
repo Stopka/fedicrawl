@@ -1,3 +1,4 @@
+import getMaxCrawlingDepth from '../../Fediverse/getMaxCrawlingDepth.js'
 import { NodeProvider } from '../../Fediverse/Providers/NodeProvider'
 import RobotsTxt from '../../Fediverse/RobotsTxt/RobotsTxt.js'
 import { findNewNodesOnPage } from './findNewNodesOnPage'
@@ -10,6 +11,13 @@ export const findNewNodes = async (
   node: Node,
   robotsTxt: RobotsTxt
 ): Promise<void> => {
+  const maxCrawlingDepth = getMaxCrawlingDepth()
+  if (maxCrawlingDepth !== undefined && node.crawlingDepth >= maxCrawlingDepth) {
+    console.info('Skipping finding nodes, max crawling depth reached', {
+      maxCrawlingDepth
+    })
+    return
+  }
   try {
     // noinspection InfiniteLoopJS
     for (let page = 0; true; page++) {

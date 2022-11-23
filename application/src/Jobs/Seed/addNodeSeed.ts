@@ -6,6 +6,6 @@ export const addNodeSeed = async (
   domains: string[]
 ): Promise<boolean> => {
   console.info('Trying to add seed domain nodes', { domains })
-  const result = await createMissingNodes(elastic, domains, undefined)
+  const result = await createMissingNodes(elastic, domains, undefined, 0)
   return result > 0
 }

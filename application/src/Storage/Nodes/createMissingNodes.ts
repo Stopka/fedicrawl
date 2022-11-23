@@ -1,9 +1,11 @@
+import getCrawlingVersion from '../../Fediverse/getCrawlingVersion.js'
 import { ElasticClient } from '../ElasticClient'
 import nodeIndex from '../Definitions/nodeIndex'
 export const createMissingNodes = async (
   elastic: ElasticClient,
   domains: string[],
-  discoveredByDomain: string | undefined
+  discoveredByDomain: string | undefined,
+  crawlingDepth: number
 ): Promise<number> => {
   const response = await elastic.bulk({
     index: nodeIndex,
@@ -14,6 +16,8 @@ export const createMissingNodes = async (
       {
         domain,
         discoveredByDomain,
+        crawlingDepth,
+        crawlingVersion: getCrawlingVersion(),
         foundAt: new Date().getTime()
       }
     ])

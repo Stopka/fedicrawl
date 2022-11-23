@@ -35,6 +35,8 @@ Configuration is done using environmental variables:
 | `WAIT_FOR_JOB_MINUTES`         | _Optional_, How many minutes should the thread sleep if there are no nodes to refresh            | `60`                          |
 | `DEFAULT_TIMEOUT_MILLISECONDS` | _Optional_, How many milliseconds should http wait for node api response on refresh              | `10000`                       |
 | `BANNED_DOMAINS`               | _Optional_, Domains not to index (even with subdomains)                                          | _empty_                       |
+| `CRAWLING_VERSION`             | _Optional_, Increasing this number can enforce recrawling of the whole index                     | 0                             |
+| `MAX_CRAWLING_DEPTH`           | _Optional_, Limits how far is fediverse indexed from seed nodes                                  | _empty_                       |
 | `TZ`                           | _Optional_, Timezone                                                                             | `UTC`                         |
 ## Deploy
 App is designed to be run in docker container and deployed using docker-compose. 
