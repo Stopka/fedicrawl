@@ -15,7 +15,7 @@ export default async function fetchRobotsTxt (domain: string): Promise<RobotsTxt
       headers: { 'User-Agent': userAgent },
       timeout: getDefaultTimeoutMilliseconds()
     })
-    content = robotsTxt.data
+    content = String(robotsTxt.data)
   } catch (error) {
     console.info('Robots.txt not found', { error, url })
   }

@@ -11,8 +11,8 @@ export const assertSuccessJsonResponse = (
     throw new UnexpectedResponseStatusError(expectedStatus, actualStatus)
   }
   const expectedContentType = 'application/json'
-  const actualContentType = response.headers['content-type']
+  const actualContentType = String(response.headers['content-type'])
   if (!actualContentType.startsWith(expectedContentType)) {
-    throw new UnexpectedContentTypeError(expectedContentType, actualContentType)
+    throw new UnexpectedContentTypeError(actualContentType, expectedContentType)
   }
 }
