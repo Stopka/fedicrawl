@@ -1,4 +1,5 @@
 import RobotsTxt from '../../Fediverse/RobotsTxt/RobotsTxt.js'
+import batchPromises from '../../Utils/batchPromises.js'
 import { refreshOrAddFeed } from './refreshOrAddFeed'
 import { FeedProvider } from '../../Fediverse/Providers/FeedProvider'
 import Node from '../../Storage/Definitions/Node'
@@ -21,10 +22,12 @@ export const refreshFeedsOnPage = async (
     provider: provider.getKey(),
     page
   })
-  return await Promise.all(
+  return await batchPromises(
     indexableFeedData.map(
-      async (feedDataItem) =>
-        await refreshOrAddFeed(elastic, node, feedDataItem)
-    )
+      (feedDataItem) => {
+        return async () => await refreshOrAddFeed(elastic, node, feedDataItem)
+      }
+    ),
+    Number(process.env.STORAGE_BATCH_SIZE ?? 5)
   )
 }

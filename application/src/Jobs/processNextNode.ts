@@ -2,6 +2,7 @@ import fetchRobotsTxt from '../Fediverse/RobotsTxt/fetchRobotsTxt.js'
 import { fetchNodeToProcess } from '../Storage/Nodes/fetchNodeToProcess'
 import { ProviderRegistry } from '../Fediverse/Providers/ProviderRegistry'
 import { setNodeRefreshed } from '../Storage/Nodes/setNodeRefreshed'
+import batchPromises from '../Utils/batchPromises.js'
 import { refreshNodeInfo } from './NodeInfo/refreshNodeInfo'
 import { setNodeRefreshAttempted } from '../Storage/Nodes/setNodeRefreshAttempted'
 import { findNewNodes } from './Nodes/findNewNodes'
@@ -37,24 +38,30 @@ export const processNextNode = async (
   }
   const provider = providerRegistry.getProviderByKey(softwareName)
 
-  await Promise.all(
-    provider.getNodeProviders().map(async (nodeProvider: NodeProvider) => {
-      console.info('Searching for nodes', {
-        domain: node.domain,
-        provider: nodeProvider.getKey()
-      })
-      return await findNewNodes(elastic, nodeProvider, node, robotsTxt)
-    })
+  await batchPromises(
+    provider.getNodeProviders().map((nodeProvider: NodeProvider) => {
+      return async () => {
+        console.info('Searching for nodes', {
+          domain: node.domain,
+          provider: nodeProvider.getKey()
+        })
+        return await findNewNodes(elastic, nodeProvider, node, robotsTxt)
+      }
+    }),
+    Number(process.env.NODE_PROVIDER_BATCH_SIZE ?? 5)
   )
 
-  await Promise.all(
-    provider.getFeedProviders().map(async (feedProvider: FeedProvider) => {
-      console.info('Searching for feeds', {
-        domain: node.domain,
-        provider: feedProvider.getKey()
-      })
-      return await refreshFeeds(elastic, feedProvider, node, robotsTxt)
-    })
+  await batchPromises(
+    provider.getFeedProviders().map((feedProvider: FeedProvider) => {
+      return async () => {
+        console.info('Searching for feeds', {
+          domain: node.domain,
+          provider: feedProvider.getKey()
+        })
+        return await refreshFeeds(elastic, feedProvider, node, robotsTxt)
+      }
+    }),
+    Number(process.env.FEED_PROVIDER_BATCH_SIZE ?? 5)
   )
 
   await deleteOldFeeds(elastic, node)

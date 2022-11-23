@@ -1,6 +1,6 @@
 import { FeedData } from '../../Fediverse/Providers/FeedData'
-import { extractTags } from '../../StringTools/extractTags'
-import { extractEmails } from '../../StringTools/extractEmails'
+import { extractTags } from '../../Utils/extractTags'
+import { extractEmails } from '../../Utils/extractEmails'
 import { updateFeed } from '../../Storage/Feeds/updateFeed'
 import Feed from '../../Storage/Definitions/Feed'
 import Node from '../../Storage/Definitions/Node'
