@@ -1,6 +1,6 @@
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
 import { FeedProviderMethod } from '../FeedProviderMethod'
 import { FeedData } from '../FeedData'
@@ -71,7 +71,7 @@ export const retrieveUsersPage: FeedProviderMethod = async (
   robotsTxt
 ): Promise<FeedData[]> => {
   const response = await robotsTxt.postIfAllowed(
-    `https://${domain}/api/users`,
+    new URL(`https://${domain}/api/users`),
     {
       state: 'all',
       origin: 'local',
@@ -80,7 +80,7 @@ export const retrieveUsersPage: FeedProviderMethod = async (
       offset: limit * page
     },
     {
-      timeout: getDefaultTimeoutMilliseconds()
+      timeout: getTimeoutMilliseconds(domain)
     }
   )
   assertSuccessJsonResponse(response)

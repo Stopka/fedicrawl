@@ -1,6 +1,6 @@
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { NodeProviderMethod } from '../NodeProviderMethod'
 import { NoMoreNodesError } from '../NoMoreNodesError'
 
@@ -22,14 +22,14 @@ const schema = z.object({
 
 export const retrieveFollowers: NodeProviderMethod = async (domain, page, robotsTxt) => {
   const response = await robotsTxt.getIfAllowed(
-    `https://${domain}/api/v1/server/followers`,
+    new URL(`https://${domain}/api/v1/server/followers`),
     {
       params: {
         count: limit,
         sort: 'createdAt',
         start: page * limit
       },
-      timeout: getDefaultTimeoutMilliseconds()
+      timeout: getTimeoutMilliseconds(domain)
     }
   )
   assertSuccessJsonResponse(response)

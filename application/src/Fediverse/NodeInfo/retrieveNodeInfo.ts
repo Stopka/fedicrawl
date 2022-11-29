@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { assertSuccessJsonResponse } from '../assertSuccessJsonResponse'
-import { getDefaultTimeoutMilliseconds } from '../getDefaultTimeoutMilliseconds'
+import getTimeoutMilliseconds from '../getTimeoutMilliseconds.js'
 import RobotsTxt from '../RobotsTxt/RobotsTxt.js'
 
 const schema = z.object({
@@ -27,10 +27,10 @@ const schema = z.object({
 
 export type NodeInfo = z.infer<typeof schema>
 
-export const retrieveNodeInfo = async (url: string, robotsTxt: RobotsTxt): Promise<NodeInfo> => {
+export const retrieveNodeInfo = async (url: URL, robotsTxt: RobotsTxt): Promise<NodeInfo> => {
   console.info('Retrieving node info', { url })
   const nodeInfoResponse = await robotsTxt.getIfAllowed(url, {
-    timeout: getDefaultTimeoutMilliseconds()
+    timeout: getTimeoutMilliseconds(url.hostname)
   })
   assertSuccessJsonResponse(nodeInfoResponse)
   return schema.parse(nodeInfoResponse.data)

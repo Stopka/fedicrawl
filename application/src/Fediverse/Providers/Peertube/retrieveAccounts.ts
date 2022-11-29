@@ -1,9 +1,9 @@
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { FeedData } from '../FeedData'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 import { parseDescription } from './parseDescription'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
 import { FeedProviderMethod } from '../FeedProviderMethod'
@@ -29,13 +29,13 @@ const schema = z.object({
 })
 
 export const retrieveAccounts: FeedProviderMethod = async (domain, page, robotsTxt) => {
-  const response = await robotsTxt.getIfAllowed(`https://${domain}/api/v1/accounts`, {
+  const response = await robotsTxt.getIfAllowed(new URL(`https://${domain}/api/v1/accounts`), {
     params: {
       count: limit,
       sort: 'createdAt',
       start: page * limit
     },
-    timeout: getDefaultTimeoutMilliseconds()
+    timeout: getTimeoutMilliseconds(domain)
   })
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)

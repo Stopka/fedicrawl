@@ -1,10 +1,10 @@
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { FeedData } from '../FeedData'
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
 import { FieldData } from '../FieldData'
 import { avatarSchema } from './Avatar'
 import { parseAvatarUrl } from './parseAvatarUrl'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
 import { parseDescription } from './parseDescription'
 import { FeedProviderMethod } from '../FeedProviderMethod'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
@@ -40,13 +40,13 @@ export const retrieveVideoChannels: FeedProviderMethod = async (
   page,
   robotsTxt
 ) => {
-  const response = await robotsTxt.getIfAllowed(`https://${domain}/api/v1/video-channels`, {
+  const response = await robotsTxt.getIfAllowed(new URL(`https://${domain}/api/v1/video-channels`), {
     params: {
       count: limit,
       sort: 'createdAt',
       start: page * limit
     },
-    timeout: getDefaultTimeoutMilliseconds()
+    timeout: getTimeoutMilliseconds(domain)
   })
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)

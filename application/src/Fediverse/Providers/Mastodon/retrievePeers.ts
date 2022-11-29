@@ -1,6 +1,6 @@
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { NodeProviderMethod } from '../NodeProviderMethod'
 import { NoMoreNodesError } from '../NoMoreNodesError'
 
@@ -11,9 +11,9 @@ export const retrievePeers: NodeProviderMethod = async (domain, page, robotsTxt)
     throw new NoMoreNodesError('peer')
   }
   const response = await robotsTxt.getIfAllowed(
-    `https://${domain}/api/v1/instance/peers`,
+    new URL(`https://${domain}/api/v1/instance/peers`),
     {
-      timeout: getDefaultTimeoutMilliseconds()
+      timeout: getTimeoutMilliseconds(domain)
     }
   )
   assertSuccessJsonResponse(response)

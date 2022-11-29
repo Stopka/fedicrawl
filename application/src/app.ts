@@ -1,6 +1,7 @@
 import providerRegistry from './Fediverse/Providers'
 import { addNodeSeed } from './Jobs/Seed/addNodeSeed'
 import { processNextNode } from './Jobs/processNextNode'
+import getSeedDomains from './Jobs/Seed/getSeedDomains.js'
 import assertNodeIndex from './Storage/Nodes/assertNodeIndex'
 import assertFeedIndex from './Storage/Feeds/assertFeedIndex'
 import elasticClient from './Storage/ElasticClient'
@@ -34,10 +35,7 @@ const app = async (): Promise<void> => {
   await assertNodeIndex(elasticClient)
   await assertFeedIndex(elasticClient)
   await deleteDomains(elasticClient, getBannedDomains())
-  const seedDomains = (process.env.SEED_NODE_DOMAIN ?? 'mastodon.social').split(
-    ','
-  )
-  await addNodeSeed(elasticClient, seedDomains)
+  await addNodeSeed(elasticClient, getSeedDomains())
   await loop()
 }
 

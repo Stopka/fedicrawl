@@ -1,6 +1,6 @@
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { NodeProviderMethod } from '../NodeProviderMethod'
 import { NoMoreNodesError } from '../NoMoreNodesError'
 
@@ -18,7 +18,7 @@ export const retrieveInstancesPage: NodeProviderMethod = async (
   robotsTxt
 ) => {
   const response = await robotsTxt.postIfAllowed(
-    `https://${domain}/api/federation/instances`,
+    new URL(`https://${domain}/api/federation/instances`),
     {
       host: null,
       blocked: null,
@@ -32,7 +32,7 @@ export const retrieveInstancesPage: NodeProviderMethod = async (
       sort: '+id'
     },
     {
-      timeout: getDefaultTimeoutMilliseconds()
+      timeout: getTimeoutMilliseconds(domain)
     }
   )
   assertSuccessJsonResponse(response)

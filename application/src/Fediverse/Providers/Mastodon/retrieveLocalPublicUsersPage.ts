@@ -1,6 +1,6 @@
 import { assertSuccessJsonResponse } from '../../assertSuccessJsonResponse'
 import { z } from 'zod'
-import { getDefaultTimeoutMilliseconds } from '../../getDefaultTimeoutMilliseconds'
+import getTimeoutMilliseconds from '../../getTimeoutMilliseconds.js'
 import { FeedProviderMethod } from '../FeedProviderMethod'
 import { NoMoreFeedsError } from '../NoMoreFeedsError'
 import { FeedData } from '../FeedData'
@@ -56,13 +56,13 @@ export const retrieveLocalPublicUsersPage: FeedProviderMethod = async (
   page,
   robotsTxt
 ): Promise<FeedData[]> => {
-  const response = await robotsTxt.getIfAllowed(`https://${domain}/api/v1/directory`, {
+  const response = await robotsTxt.getIfAllowed(new URL(`https://${domain}/api/v1/directory`), {
     params: {
       limit,
       offset: page * limit,
       local: true
     },
-    timeout: getDefaultTimeoutMilliseconds()
+    timeout: getTimeoutMilliseconds(domain)
   })
   assertSuccessJsonResponse(response)
   const responseData = schema.parse(response.data)

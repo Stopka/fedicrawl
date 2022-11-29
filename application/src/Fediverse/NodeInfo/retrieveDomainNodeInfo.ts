@@ -14,5 +14,5 @@ export const retrieveDomainNodeInfo = async (
   if (typeof link === 'undefined') {
     throw new NoSupportedLinkError(domain)
   }
-  return await retrieveNodeInfo(link.href, robotsTxt)
+  return await retrieveNodeInfo(new URL(link.href), robotsTxt)
 }

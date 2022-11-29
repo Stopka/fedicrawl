@@ -1,7 +1,7 @@
 export class RobotsTxtError extends Error {
-  public readonly url
-  public constructor (url: string) {
+  public readonly url: string
+  public constructor (url: URL) {
     super('Request was blocked by robots.txt')
-    this.url = url
+    this.url = url.toString()
   }
 }
