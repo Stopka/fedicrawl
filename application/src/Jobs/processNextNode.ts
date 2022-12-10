@@ -1,6 +1,7 @@
 import fetchRobotsTxt from '../Fediverse/RobotsTxt/fetchRobotsTxt.js'
 import { fetchNodeToProcess } from '../Storage/Nodes/fetchNodeToProcess'
 import { ProviderRegistry } from '../Fediverse/Providers/ProviderRegistry'
+import isDomainValid from '../Storage/Nodes/isDomainValid.js'
 import { setNodeRefreshed } from '../Storage/Nodes/setNodeRefreshed'
 import batchPromises from '../Utils/batchPromises.js'
 import { refreshNodeInfo } from './NodeInfo/refreshNodeInfo'
@@ -13,6 +14,7 @@ import { deleteOldFeeds } from '../Storage/Feeds/deleteOldFeeds'
 import refreshNodeIps from './Dns/refreshNodeIps'
 import { ElasticClient } from '../Storage/ElasticClient'
 import updateNodeFeedStats from './Nodes/updateNodeFeedStats'
+import deleteDomains from './Seed/deleteBannedNodes.js'
 
 export const processNextNode = async (
   elastic: ElasticClient,
@@ -21,7 +23,12 @@ export const processNextNode = async (
   console.info('#############################################')
   let node = await fetchNodeToProcess(elastic)
   node = await setNodeRefreshAttempted(elastic, node)
-
+  // TODO remove check later
+  if (!isDomainValid(node.domain)) {
+    console.info('Node domain is invalid, deleting node', { domain: node.domain })
+    await deleteDomains(elastic, [node.domain])
+    return
+  }
   node = await refreshNodeIps(elastic, node)
   const robotsTxt = await fetchRobotsTxt(node.domain)
   node = await refreshNodeInfo(elastic, node, robotsTxt)

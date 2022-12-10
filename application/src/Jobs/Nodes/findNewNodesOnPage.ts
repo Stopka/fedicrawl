@@ -4,6 +4,7 @@ import { NodeProvider } from '../../Fediverse/Providers/NodeProvider'
 import Node from '../../Storage/Definitions/Node'
 import { ElasticClient } from '../../Storage/ElasticClient'
 import isDomainNotBanned from '../../Storage/Nodes/isDomainNotBanned'
+import isDomainValid from '../../Storage/Nodes/isDomainValid.js'
 
 export const findNewNodesOnPage = async (
   elastic: ElasticClient,
@@ -13,7 +14,9 @@ export const findNewNodesOnPage = async (
   robotsTxt: RobotsTxt
 ): Promise<number> => {
   let domains = await provider.retrieveNodes(node.domain, page, robotsTxt)
-  domains = domains.filter(isDomainNotBanned)
+  domains = domains.filter(
+    (domain: string): boolean => isDomainValid(domain) && isDomainNotBanned(domain)
+  )
   console.log('Found nodes', {
     count: domains.length,
     domain: node.domain,
