@@ -6,10 +6,10 @@ import RobotsTxt from '../RobotsTxt/RobotsTxt.js'
 const schema = z.object({
   name: z.string().optional(),
   software: z.object({
-    name: z.string(),
-    version: z.string()
+    name: z.string().nullable(),
+    version: z.string().nullable()
   }),
-  protocols: z.array(z.string()),
+  protocols: z.array(z.string()).optional(),
   usage: z.optional(
     z.object({
       users: z.optional(

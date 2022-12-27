@@ -14,7 +14,12 @@ export const refreshNodeInfo = async (
     const nodeInfo = await retrieveDomainNodeInfo(node.domain, robotsTxt)
     return await updateNodeInfo(elastic, node, nodeInfo)
   } catch (error) {
-    console.warn('Failed to update node info', error)
-    return node
+    console.warn('Failed to update node info, unsetting node', error)
+    return await updateNodeInfo(elastic, node, {
+      software: {
+        name: null,
+        version: null
+      }
+    })
   }
 }

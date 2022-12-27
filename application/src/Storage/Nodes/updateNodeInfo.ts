@@ -23,8 +23,8 @@ export const updateNodeInfo = async (
     doc: {
       name: nodeInfo?.name,
       openRegistrations: nodeInfo?.openRegistrations,
-      softwareName: nodeInfo?.software?.name?.toLocaleLowerCase(),
-      softwareVersion: nodeInfo?.software?.version,
+      softwareName: nodeInfo?.software?.name?.toLocaleLowerCase() ?? null,
+      softwareVersion: nodeInfo?.software?.version ?? null,
       halfYearActiveUserCount: assertPositiveInt(
         nodeInfo?.usage?.users?.activeHalfyear
       ),
@@ -40,6 +40,6 @@ export const updateNodeInfo = async (
     await getNode(elastic, node.domain),
     'Missing node after updating it'
   )
-  console.info('Updated node info', { node })
+  console.info('Updated node info', { resultNode })
   return resultNode
 }
