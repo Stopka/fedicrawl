@@ -7,13 +7,26 @@ export const deleteOldFeeds = async (
   node: Node
 ): Promise<number> => {
   await elastic.indices.refresh({ index: feedIndex })
+  // delete by domain and (refreshedAt < node.refreshAttepmtedAt or refreshedAt=null)
   const result = await elastic.deleteByQuery({
     index: feedIndex,
     query: {
       bool: {
         must: [
           { match: { domain: node.domain } },
-          { range: { refreshedAt: { lt: node.refreshAttemptedAt } } }
+          {
+            bool: {
+              should: [
+                { range: { refreshedAt: { lt: node.refreshAttemptedAt } } },
+                {
+                  bool: {
+                    must_not: { exists: { field: 'refreshedAt' } }
+                  }
+                }
+              ],
+              minimum_should_match: 1
+            }
+          }
         ]
       }
     }

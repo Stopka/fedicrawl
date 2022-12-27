@@ -30,6 +30,7 @@ export const createFeed = async (
       displayName: feedData.displayName,
       locked: feedData.locked,
       createdAt: feedData.createdAt.getTime(),
+      refreshedAt: new Date().getTime(),
       foundAt: new Date().getTime(),
       fields: feedData.fields.map((field) => {
         return { name: field.name, value: field.value }

@@ -20,11 +20,11 @@ export const updateFeed = async (
       followersCount: feedData.followersCount,
       followingCount: feedData.followingCount,
       statusesCount: feedData.statusesCount,
-      lastStatusAt: feedData.lastStatusAt,
+      lastStatusAt: feedData.lastStatusAt?.getTime(),
       description: feedData.description,
       displayName: feedData.displayName,
       locked: feedData.locked,
-      createdAt: feedData.createdAt,
+      createdAt: feedData.createdAt.getTime(),
       refreshedAt: new Date().getTime(),
       type: feedData.type,
       fields: feedData.fields.map((field) => {
